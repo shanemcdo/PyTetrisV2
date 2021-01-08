@@ -2,6 +2,7 @@
 
 import pygame, sys
 from pygame.locals import *
+from enum import Enum
 from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
 
@@ -15,28 +16,18 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     cropped.blit(surface, (0, 0), rect)
     return cropped
 
-def load_cells_from_image(file_name: str, peice_count: int = 7, real_cell_size: Point = None) -> [pygame.Surface]:
-    """Split an image into 7 surfaces to be used as tiles"""
-    image = pygame.image.load(file_name)
-    image_size = Point._make(image.get_size())
-    cell_size = Point(image_size.x // peice_count, image_size.y)
-    if not real_cell_size:
-        real_cell_size = cell_size
-    return [pygame.transform.scale(clip_surface(image, Rect((x, 0), cell_size)), real_cell_size) for x in range(0, image_size.x, cell_size.x)]
 
-class Cell:
-    # TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough> #
+# TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough> #
+class Cell(Enum):
     """Represents a square on the grid"""
-    CELLS = load_cells_from_image('assets/peices.png', real_cell_size = (30, 30))
     EMPTY = None
-    RED = CELLS[0]
-    ORANGE = CELLS[1]
-    YELLOW = CELLS[2]
-    GREEN = CELLS[3]
-    CYAN = CELLS[4]
-    BLUE = CELLS[5]
-    PURPLE = CELLS[6]
-
+    RED = 0
+    ORANGE = 1
+    YELLOW = 2
+    GREEN = 3
+    CYAN = 4
+    BLUE = 5
+    PURPLE = 6
 
 class Peice:
     """Represents a tetris peice or tetrimino"""
@@ -58,6 +49,7 @@ class PyTetrisGame(GameScreen):
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.cell_size = Point(30, 30)
+        self.cells = self.load_cells_from_image('assets/peices.png')
 
     def draw_board(self):
         board_screen_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
@@ -69,11 +61,18 @@ class PyTetrisGame(GameScreen):
             pygame.draw.line(board_screen, (255, 255, 255), (0, i * self.cell_size.y), (board_screen_size.y, i * self.cell_size.x))
         for i, row in enumerate(self.board):
             for j, cell in enumerate(row):
-                if cell:
-                    board_screen.blit(cell, (j * self.cell_size.x, i * self.cell_size.y))
+                if cell != Cell.EMPTY:
+                    board_screen.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
         board_center = board_screen.get_rect().center
         center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
         self.screen.blit(board_screen, center)
+
+    def load_cells_from_image(self, file_name: str) -> [pygame.Surface]:
+        """Split an image into 7 surfaces to be used as tiles"""
+        image = pygame.image.load(file_name)
+        image_size = Point._make(image.get_size())
+        cell_size = Point(image_size.x // 7, image_size.y)
+        return [pygame.transform.scale(clip_surface(image, Rect((x, 0), cell_size)), self.cell_size) for x in range(0, image_size.x, cell_size.x)]
 
     def update(self):
         self.screen.fill((255, 255, 255))
