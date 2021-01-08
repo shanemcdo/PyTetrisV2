@@ -6,7 +6,7 @@ from collections import namedtuple
 
 Point = namedtuple('Point', ['x', 'y'])
 
-def new_matrix(width: int, height: int = None, value = None):
+def new_matrix(width: int, height: int = None, value = None) -> [[]]:
     return [[value for j in range(width)] for i in range(height if height else width)]
 
 class Button:
