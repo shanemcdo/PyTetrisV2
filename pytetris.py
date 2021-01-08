@@ -15,12 +15,14 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     cropped.blit(surface, (0, 0), rect)
     return cropped
 
-def load_cells_from_image(file_name: str, peice_count: int = 7) -> [pygame.Surface]:
+def load_cells_from_image(file_name: str, peice_count: int = 7, real_cell_size: Point = None) -> [pygame.Surface]:
     """Split an image into 7 surfaces to be used as tiles"""
     image = pygame.image.load(file_name)
     image_size = Point._make(image.get_size())
     cell_size = Point(image_size.x // peice_count, image_size.y)
-    return [clip_surface(image, Rect((x, 0), cell_size)) for x in range(0, image_size.x, cell_size.x)]
+    if not real_cell_size:
+        real_cell_size = cell_size
+    return [pygame.transform.scale(clip_surface(image, Rect((x, 0), cell_size)), real_cell_size) for x in range(0, image_size.x, cell_size.x)]
 
 class Cell:
     """Represents a square on the grid"""
@@ -52,6 +54,18 @@ class PyTetrisGame(GameScreen):
         super().__init__(screen, window_size, 60)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, ' ')
+        self.cell_size = Point(30, 30)
+
+    def draw_board(self):
+        board_screen = pygame.Surface((self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y))
+        board_screen.fill((0, 0, 0))
+        board_center = board_screen.get_rect().center
+        center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
+        self.screen.blit(board_screen, center)
+
+    def update(self):
+        self.screen.fill((255, 255, 255))
+        self.draw_board()
 
     def key_down(self, event: pygame.event.Event):
         if event.key == K_ESCAPE:
