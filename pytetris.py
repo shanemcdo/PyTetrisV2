@@ -69,6 +69,7 @@ class Peice:
         self.move_to(board, Point(self.pos.x + 1, self.pos.y))
 
     def move_to(self, board: [[Cell]], pos: Point) -> bool:
+        """Try to move to a new position"""
         if valid := self.check_valid_position(board, pos):
             self.pos = pos
         return valid
