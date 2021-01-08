@@ -3,7 +3,7 @@ target = dist/pytetris.exe
 all: $(target)
 
 $(target): pytetris.py
-	pyinstaller $< --onefile --noconsole --clean
+	pyinstaller $< -w -F
 
 test: all
 	$(target)

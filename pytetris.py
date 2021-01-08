@@ -10,7 +10,7 @@ class PyTetrisMenu(MenuScreen):
         super().__init__(screen, window_size, 10)
         # lucidaconsole, lucidasans, agencyfb, copperplategothic, dubairegualar
         # font = pygame.font.SysFont('lucidaconsole', 60)
-        font = pygame.font.Font('assets/tetris-atari.ttf', 50)
+        font = pygame.font.Font('assets/tetris-atari.ttf', 30)
         self.buttons = [
             Button(lambda: print('Play'), 'Play', Rect(20, 240, 260, 100), font, border_size = 2),
             Button(lambda: print('Options'), 'Options', Rect(20, 350, 260, 100), font, border_size = 2),
