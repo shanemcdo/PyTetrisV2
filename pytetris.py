@@ -77,7 +77,7 @@ class Peice:
         """Check if the position passed is avaliale for the this object"""
         for i, row in enumerate(self.matrix):
             for j, cell in enumerate(row):
-                if cell != Cell.EMPTY and not (pos.x + j >= 0 and pos.x + j < self.board_size.x and pos.y + i < self.board_size.y and board[i][j] == Cell.EMPTY):
+                if cell != Cell.EMPTY and not (pos.x + j >= 0 and pos.x + j < self.board_size.x and pos.y + i < self.board_size.y and board[i + pos.y][j + pos.x] == Cell.EMPTY):
                     return False
         return True
 
@@ -97,7 +97,6 @@ class PyTetrisGame(GameScreen):
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
         self.num_of_peices = len(Cell) - 1
-        print(self.num_of_peices)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.cell_size = Point(30, 30)
