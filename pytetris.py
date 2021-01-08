@@ -153,7 +153,7 @@ class PyTetrisGame(GameScreen):
     SCORE_DICT = {
             # TODO
             }
-    LEVEL_FRAMES = {
+    LEVEL_FRAMES = { # 1 cell per {value} at level {key}
             0: 48,
             1: 43,
             2: 38,
@@ -185,7 +185,7 @@ class PyTetrisGame(GameScreen):
             28: 2,
             29: 1,
             }
-    LEVEL_LINES = {
+    LEVEL_LINES = { # how many lines it takes to reach the next level
             0: 10,
             1: 20,
             2: 30,
@@ -216,6 +216,10 @@ class PyTetrisGame(GameScreen):
             27: 200,
             28: 200,
             }
+    SOFT_DROP_SPEED = 2 # 1 cell per 2 frames; speed of fall
+    DAS_INITIAL_DELAY = 16 # 1 cell per 16 frames; inital speed when holding button
+    DAS_REPEAT_DELAY = 6 # 1 cell per 6 frames; speed after first iteration of holding button
+    ARE_DELAY = 15 # time(frames) after a new peice is created where the peice cannot move
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
@@ -293,6 +297,7 @@ class PyTetrisGame(GameScreen):
 
     def reset(self):
         self.player = self.get_from_grab_bag(True)
+        self.level = 0
 
     def exit(self):
         self.reset()
