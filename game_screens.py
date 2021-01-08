@@ -55,12 +55,10 @@ class GameScreen:
         self.clock = pygame.time.Clock()
 
     def key_down(self, event: pygame.event.Event):
-        print(event)
+        pass
 
     def mouse_button_down(self, event: pygame.event.Event):
-        # maybe change this function to on mouse click because
-        # this function cannot do hovering
-        print(event)
+        pass
 
     def update(self):
         self.screen.fill((0, 0, 100))
