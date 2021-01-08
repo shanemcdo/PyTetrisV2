@@ -1,9 +1,11 @@
+"""PyTetris is a game that is made to to be a unoffical version of tetris made with pygame"""
+
 import pygame, sys
 from pygame.locals import *
 from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
 
-class PyTetrisMenu(MenuScreen):
+class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
@@ -30,5 +32,5 @@ if __name__ == "__main__":
     pygame.init()
     size = Point(600, 700)
     screen = pygame.display.set_mode(size)
-    menu = PyTetrisMenu(screen, size)
+    menu = MainMenu(screen, size)
     menu.run()

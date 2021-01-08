@@ -1,3 +1,5 @@
+"""Basic classes for creating a pygame application"""
+
 import pygame, sys
 from pygame.locals import *
 from collections import namedtuple
