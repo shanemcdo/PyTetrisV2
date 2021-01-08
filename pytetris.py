@@ -3,22 +3,29 @@ from pygame.locals import *
 from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
 
-class MainMenu(MenuScreen):
-    """The main menu of a pygame application"""
+class PyTetrisMenu(MenuScreen):
+    """The main menu of the pytetris game"""
 
-    def __init__(self, screen: pygame.Surface, window_size: Point, frame_rate: int = 30):
-        super().__init__(screen, window_size, frame_rate)
+    def __init__(self, screen: pygame.Surface, window_size: Point):
+        super().__init__(screen, window_size, 10)
         # lucidaconsole, lucidasans, agencyfb, copperplategothic, dubairegualar
-        self.button_font = pygame.font.SysFont('lucidaconsole', 60)
+        font = pygame.font.SysFont('lucidaconsole', 60)
         self.buttons = [
-            Button(lambda: print('Play'), 'Play', Rect(20, 40, 260, 100), self.button_font),
-            Button(lambda: print('Options'), 'Options', Rect(20, 150, 260, 100), self.button_font),
-            Button(sys.exit, 'Quit', Rect(20, 260, 260, 100), self.button_font),
+            Button(lambda: print('Play'), 'Play', Rect(20, 240, 260, 100), font, border_size = 2),
+            Button(lambda: print('Options'), 'Options', Rect(20, 350, 260, 100), font, border_size = 2),
+            Button(sys.exit, 'Quit', Rect(20, 460, 260, 100), font, border_size = 2),
             ]
+        self.background = pygame.image.load('assets/menu_background.png')
+        self.background_rect = self.background.get_rect()
+        self.background_rect.y = self.window_size.y - self.background_rect.h
+
+    def update(self):
+        self.screen.blit(self.background, self.background_rect)
+        super().update()
 
 if __name__ == "__main__":
     pygame.init()
     size = Point(600, 700)
     screen = pygame.display.set_mode(size)
-    menu = MainMenu(screen, size)
+    menu = PyTetrisMenu(screen, size)
     menu.run()

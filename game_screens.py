@@ -10,7 +10,7 @@ def new_matrix(width: int, height: int = None, value = None):
 class Button:
     """A button in a pygame application"""
 
-    def __init__(self, action: callable, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), highlight_color: Color = (255, 0, 0), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0):
+    def __init__(self, action: callable, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), highlight_color: Color = (255, 0, 0), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0, border_size: int = 0, border_color: int = (0, 0, 0)):
         self.action = action
         self.text = text
         self.rect = rect
@@ -20,10 +20,14 @@ class Button:
         self.highlight_color = highlight_color
         self.width = width
         self.border_radius = border_radius
+        self.border_size = border_size
+        self.border_color = border_color
         self.highlight = False
 
     def draw(self, screen: pygame.Surface):
         pygame.draw.rect(screen, self.highlight_color if self.highlight else self.rect_color, self.rect, self.width, self.border_radius)
+        if self.border_size > 0:
+            pygame.draw.rect(screen, self.border_color, self.rect, self.border_size, self.border_radius)
         text_obj = self.font.render(self.text, True, self.font_color)
         text_size = text_obj.get_size()
         screen.blit(text_obj, (self.rect.centerx - text_size[0] / 2, self.rect.centery - text_size[1] / 2))
@@ -41,9 +45,10 @@ class GameScreen:
 
     def __init__(self, screen: pygame.Surface, window_size: Point, frame_rate: int = 30):
         self.screen = screen
-        self.size = window_size
+        self.window_size = window_size
         self.frame_rate = frame_rate
         self.running = False
+        self.rect = self.screen.get_rect()
         self.clock = pygame.time.Clock()
 
     def keyboard_input(self, event: pygame.event.Event):
@@ -100,7 +105,6 @@ class MenuScreen(GameScreen):
             self.buttons[self.button_index]()
 
     def update(self):
-        super().update()
         for button in self.buttons:
             button.draw(self.screen)
 
