@@ -16,8 +16,8 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     cropped.blit(surface, (0, 0), rect)
     return cropped
 
-
-# TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough> #
+# TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough>
+#   maybe put everything in one bigger class PyTetris?
 class Cell(Enum):
     """Represents a square on the grid"""
     EMPTY = None
@@ -81,7 +81,6 @@ class PyTetrisGame(GameScreen):
     def key_down(self, event: pygame.event.Event):
         if event.key == K_ESCAPE:
             self.running = False
-
 
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
