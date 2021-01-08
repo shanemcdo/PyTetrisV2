@@ -87,8 +87,8 @@ class PyTetrisGame(GameScreen):
                     [
                         [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
                         [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
                         [Cell.EMPTY, Cell.ORANGE, Cell.ORANGE, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
@@ -97,8 +97,8 @@ class PyTetrisGame(GameScreen):
                     [
                         [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
                         [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
                         [Cell.EMPTY, Cell.BLUE, Cell.BLUE, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
