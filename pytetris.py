@@ -25,8 +25,9 @@ def load_cells_from_image(file_name: str, peice_count: int = 7, real_cell_size: 
     return [pygame.transform.scale(clip_surface(image, Rect((x, 0), cell_size)), real_cell_size) for x in range(0, image_size.x, cell_size.x)]
 
 class Cell:
+    # TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough> #
     """Represents a square on the grid"""
-    CELLS = load_cells_from_image('assets/peices.png')
+    CELLS = load_cells_from_image('assets/peices.png', real_cell_size = (30, 30))
     EMPTY = None
     RED = CELLS[0]
     ORANGE = CELLS[1]
@@ -35,6 +36,7 @@ class Cell:
     CYAN = CELLS[4]
     BLUE = CELLS[5]
     PURPLE = CELLS[6]
+
 
 class Peice:
 
@@ -53,7 +55,7 @@ class PyTetrisGame(GameScreen):
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
         self.board_size = Point(10, 20)
-        self.board = new_matrix(self.board_size.x, self.board_size.y, ' ')
+        self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.cell_size = Point(30, 30)
 
     def draw_board(self):
@@ -64,6 +66,10 @@ class PyTetrisGame(GameScreen):
             pygame.draw.line(board_screen, (255, 255, 255), (i * self.cell_size.x, 0), (i * self.cell_size.x, board_screen_size.y))
         for i in range(self.board_size.y):
             pygame.draw.line(board_screen, (255, 255, 255), (0, i * self.cell_size.y), (board_screen_size.y, i * self.cell_size.x))
+        for i, row in enumerate(self.board):
+            for j, cell in enumerate(row):
+                if cell:
+                    board_screen.blit(cell, (j * self.cell_size.x, i * self.cell_size.y))
         board_center = board_screen.get_rect().center
         center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
         self.screen.blit(board_screen, center)
