@@ -34,9 +34,19 @@ class Peice:
 
     def __init__(self, matrix: [[Cell]], board_size: Point, window_size: Point):
         self.matrix = matrix
+        self.matrix_size = Point(len(matrix[0]), len(matrix))
         self.board_size = board_size
         self.window_size = window_size
-        self.pos = Point(board_size // 2 - 2, -4)
+        self.pos = Point(board_size.x // 2 - 2, -4)
+
+    def get_surface(self, cells: [pygame.Surface], cell_size: Point) -> pygame.Surface:
+        """Get a surface witht the given tetris peice on it"""
+        result = pygame.Surface((self.matrix_size.x * cell_size.x, self.matrix_size.y * cell_size.y))
+        for i, row in enumerate(self.matrix):
+            for j, cell in enumerate(row):
+                if cell != Cell.EMPTY:
+                    result.blit(cells[cell.value], (j * cell_size.x, i * cell_size.y))
+        return result
 
 class PyTetrisGame(GameScreen):
     """
@@ -50,6 +60,76 @@ class PyTetrisGame(GameScreen):
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.cell_size = Point(30, 30)
         self.cells = self.load_cells_from_image('assets/peices.png')
+        self.peices = [
+                Peice(
+                    [
+                        [Cell.YELLOW, Cell.YELLOW],
+                        [Cell.YELLOW, Cell.YELLOW],
+                        ],
+                    self.board_size,
+                    self.window_size
+                    ),
+                Peice(
+                    [
+                        [Cell.EMPTY, Cell.PURPLE, Cell.EMPTY],
+                        [Cell.PURPLE, Cell.PURPLE, Cell.PURPLE],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        ],
+                    self.board_size,
+                    self.window_size
+                    ),
+                Peice(
+                    [
+                        [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.ORANGE, Cell.ORANGE, Cell.EMPTY],
+                        ],
+                    self.board_size,
+                    self.window_size
+                    ),
+                Peice(
+                    [
+                        [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.BLUE, Cell.BLUE, Cell.EMPTY],
+                        ],
+                    self.board_size,
+                    self.window_size
+                    ),
+                Peice(
+                    [
+                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
+                        ],
+                    self.board_size,
+                    self.window_size
+                    ),
+                Peice(
+                    [
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.RED, Cell.RED, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.RED, Cell.RED],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        ],
+                    self.board_size,
+                    self.window_size
+                    ),
+                Peice(
+                    [
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.GREEN, Cell.GREEN],
+                        [Cell.EMPTY, Cell.GREEN, Cell.GREEN, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        ],
+                    self.board_size,
+                    self.window_size
+                    ),
+                ]
+        self.player = self.peices[0]
 
     def draw_board(self):
         board_screen_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
