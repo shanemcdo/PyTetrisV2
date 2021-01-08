@@ -10,7 +10,8 @@ def new_matrix(width: int, height: int = None, value = None):
 class Button:
     """A button in a pygame application"""
 
-    def __init__(self, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0):
+    def __init__(self, action: callable, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0):
+        self.action = action
         self.text = text
         self.rect = rect
         self.font = font
@@ -25,9 +26,13 @@ class Button:
         text_size = text_obj.get_size()
         screen.blit(text_obj, (self.rect.centerx - text_size[0] / 2, self.rect.centery - text_size[1] / 2))
 
+    def __call__(self):
+        """Overwrite the () operator on the button object"""
+        self.action()
+
 class GameScreen:
     """
-    A class to reperesent a screen inside a game
+    A class to reperesent a screen inside a pygame application
     e.g.: menu, pause screen, or main screen
 
     """
@@ -43,6 +48,8 @@ class GameScreen:
         print(event)
 
     def mouse_input(self, event: pygame.event.Event):
+        # maybe change this function to on mouse click because
+        # this function cannot do hovering
         print(event)
 
     def update(self):
@@ -51,7 +58,6 @@ class GameScreen:
     def run(self):
         """Run the main loop"""
         self.running = True
-        button = Button('Button!', Rect(20, 40, 100, 50), pygame.font.SysFont('arial', 20))
         while self.running:
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -61,13 +67,51 @@ class GameScreen:
                 elif event.type == MOUSEBUTTONDOWN:
                     self.mouse_input(event)
             self.update()
-            button.draw(self.screen)
             pygame.display.update()
             self.clock.tick(self.frame_rate)
+
+class MenuScreen(GameScreen):
+    """
+    A class to represent a menu screen inside a pygame application
+    e.g.: Main menu, Pause menu, Options
+    """
+
+    def __init__(self, screen :pygame.Surface, window_size: Point, frame_rate: int = 30):
+        super().__init__(screen, window_size, frame_rate)
+        self.buttons = [
+                Button(lambda: print(1), 'Button!', Rect(20, 40, 100, 50), pygame.font.SysFont('arial', 20)),
+                Button(lambda: print(2), 'Another Button!', Rect(20, 100, 150, 50), pygame.font.SysFont('arial', 20)),
+                Button(lambda: print(3), 'Third!', Rect(20, 160, 60, 50), pygame.font.SysFont('arial', 20)),
+                ]
+        self.button_index = 0
+
+    def keyboard_input(self, event: pygame.event.Event):
+        if event.key == K_UP or event.key == K_RIGHT:
+            self.button_index += 1
+            buttons_length = len(self.buttons)
+            if self.button_index >= buttons_length:
+                self.button_index %= buttons_length
+        elif event.key == K_DOWN or event.key == K_LEFT:
+            self.button_index -= 1
+            if self.button_index < 0:
+                self.button_index = len(self.buttons) - 1
+        elif event.key == K_RETURN:
+            self.buttons[self.button_index]()
+
+    def update(self):
+        super().update()
+        for button in self.buttons:
+            button.draw(self.screen)
+
+    def mouse_input(self, event: pygame.event.Event):
+        mouse_pos = pygame.mouse.get_pos()
+        for button in self.buttons:
+            if button.rect.collidepoint(mouse_pos):
+                button()
 
 if __name__ == "__main__":
     pygame.init()
     size = Point(600, 600)
     screen = pygame.display.set_mode(size)
-    gs = GameScreen(screen, size)
-    gs.run()
+    game = MenuScreen(screen, size)
+    game.run()
