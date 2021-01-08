@@ -11,7 +11,6 @@ def new_matrix(width: int, height: int = None, value = None):
 
 class Button:
     """A button in a pygame application"""
-    # TODO: Add a clicked color <07-01-21, Shane McDonough> #
 
     def __init__(
             self,
