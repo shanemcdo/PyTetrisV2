@@ -57,8 +57,13 @@ class PyTetrisGame(GameScreen):
         self.cell_size = Point(30, 30)
 
     def draw_board(self):
-        board_screen = pygame.Surface((self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y))
+        board_screen_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
+        board_screen = pygame.Surface(board_screen_size)
         board_screen.fill((0, 0, 0))
+        for i in range(self.board_size.x):
+            pygame.draw.line(board_screen, (255, 255, 255), (i * self.cell_size.x, 0), (i * self.cell_size.x, board_screen_size.y))
+        for i in range(self.board_size.y):
+            pygame.draw.line(board_screen, (255, 255, 255), (0, i * self.cell_size.y), (board_screen_size.y, i * self.cell_size.x))
         board_center = board_screen.get_rect().center
         center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
         self.screen.blit(board_screen, center)
