@@ -41,7 +41,9 @@ class Peice:
 
     def get_surface(self, cells: [pygame.Surface], cell_size: Point) -> pygame.Surface:
         """Get a surface witht the given tetris peice on it"""
-        result = pygame.Surface((self.matrix_size.x * cell_size.x, self.matrix_size.y * cell_size.y))
+        # SRCALPHA allows the background to be transparent
+        result = pygame.Surface((self.matrix_size.x * cell_size.x, self.matrix_size.y * cell_size.y), flags = SRCALPHA)
+        result.fill((0, 0, 0, 0)) # set transparent
         for i, row in enumerate(self.matrix):
             for j, cell in enumerate(row):
                 if cell != Cell.EMPTY:
@@ -129,7 +131,6 @@ class PyTetrisGame(GameScreen):
                     self.window_size
                     ),
                 ]
-        self.player = self.peices[0]
 
     def draw_board(self):
         board_screen_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
@@ -143,6 +144,7 @@ class PyTetrisGame(GameScreen):
             for j, cell in enumerate(row):
                 if cell != Cell.EMPTY:
                     board_screen.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
+        # board_screen.blits([(self.peices[i].get_surface(self.cells, self.cell_size), ((0, i * self.cell_size.y * 4), (self.cell_size.x * 4, self.cell_size.y * 4))) for i in range(7)])
         board_center = board_screen.get_rect().center
         center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
         self.screen.blit(board_screen, center)
