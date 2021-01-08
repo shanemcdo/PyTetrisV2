@@ -11,6 +11,7 @@ def new_matrix(width: int, height: int = None, value = None):
 
 class Button:
     """A button in a pygame application"""
+    # TODO: Add a clicked color <07-01-21, Shane McDonough> #
 
     def __init__(self, action: callable, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), highlight_color: Color = (200, 200, 200), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0, border_size: int = 0, border_color: int = (0, 0, 0)):
         self.action = action
@@ -111,7 +112,9 @@ class MenuScreen(GameScreen):
             button.draw(self.screen)
 
     def mouse_input(self, event: pygame.event.Event):
-        mouse_pos = pygame.mouse.get_pos()
-        for button in self.buttons:
-            if button.rect.collidepoint(mouse_pos):
-                button()
+        # TODO: change the self.button_index to the clicked button <07-01-21, Shane McDonough> #
+        if event.button == 1:
+            mouse_pos = pygame.mouse.get_pos()
+            for button in self.buttons:
+                if button.rect.collidepoint(mouse_pos):
+                    button()

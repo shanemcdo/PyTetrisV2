@@ -2,7 +2,7 @@ target = dist/pytetris.exe
 
 all: $(target)
 
-$(target): pytetris.py
+$(target): pytetris.py *.py
 	pyinstaller $< -w -F
 
 test: all
