@@ -15,13 +15,10 @@ class PyTetrisMenu(MenuScreen):
             Button(lambda: print('Options'), 'Options', Rect(20, 350, 260, 100), font, border_size = 2),
             Button(sys.exit, 'Quit', Rect(20, 460, 260, 100), font, border_size = 2),
             ]
-        self.background = pygame.image.load('assets/menu_background.png')
-        self.background_rect = self.background.get_rect()
-        self.background_rect.y = self.window_size.y - self.background_rect.h
-
-    def update(self):
-        self.screen.blit(self.background, self.background_rect)
-        super().update()
+        background = pygame.image.load('assets/menu_background.png')
+        background_rect = background.get_rect()
+        background_rect.y = window_size.y - background_rect.h
+        screen.blit(background, background_rect)
 
 if __name__ == "__main__":
     pygame.init()
