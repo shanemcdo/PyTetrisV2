@@ -38,7 +38,7 @@ class Peice:
         self.matrix_size = Point(len(matrix[0]), len(matrix))
         self.board_size = board_size
         self.window_size = window_size
-        self.pos = Point(board_size.x // 2 - 2, -4)
+        self.pos = Point(board_size.x // 2 - self.matrix_size.x // 2, -4)
 
     def get_surface(self, cells: [pygame.Surface], cell_size: Point) -> pygame.Surface:
         """Get a surface witht the given tetris peice on it"""
