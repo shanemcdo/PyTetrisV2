@@ -91,7 +91,6 @@ class MenuScreen(GameScreen):
 
     def key_down(self, event: pygame.event.Event):
         if event.key == K_UP or event.key == K_RIGHT or event.key == K_DOWN or event.key == K_LEFT:
-            self.buttons[self.button_index].highlight = False
             if event.key == K_DOWN or event.key == K_RIGHT:
                 self.button_index += 1
                 buttons_length = len(self.buttons)
@@ -101,13 +100,12 @@ class MenuScreen(GameScreen):
                 self.button_index -= 1
                 if self.button_index < 0:
                     self.button_index = len(self.buttons) - 1
-            self.buttons[self.button_index].highlight = True
         elif event.key == K_RETURN or event.key == K_SPACE:
             self.buttons[self.button_index]()
 
     def update(self):
-        for button in self.buttons:
-            button.draw(self.screen)
+        for i, button in enumerate(self.buttons):
+            button.draw(self.screen, True if i == self.button_index else None)
 
     def mouse_button_down(self, event: pygame.event.Event):
         # TODO: change the self.button_index to the clicked button <07-01-21, Shane McDonough> #
