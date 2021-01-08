@@ -16,13 +16,13 @@ class Button:
             rect: Rect,
             font: pygame.font.Font,
             rect_color: Color = (255, 255, 255),
-            highlight_color: Color = (200, 200, 200),
+            highlight_color: Color = (150, 150, 150),
             font_color: Color = (0, 0, 0),
             width: int = 0,
             border_radius: int = 0,
             border_size: int = 0,
             border_color: Color = (0, 0, 0),
-            clicked_color: Color = (150, 150, 150)
+            clicked_color: Color = (100, 100, 100)
             ):
         self.action = action
         self.text = text
