@@ -13,7 +13,21 @@ class Button:
     """A button in a pygame application"""
     # TODO: Add a clicked color <07-01-21, Shane McDonough> #
 
-    def __init__(self, action: callable, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), highlight_color: Color = (200, 200, 200), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0, border_size: int = 0, border_color: int = (0, 0, 0)):
+    def __init__(
+            self,
+            action: callable,
+            text: str,
+            rect: Rect,
+            font: pygame.font.Font,
+            rect_color: Color = (255, 255, 255),
+            highlight_color: Color = (200, 200, 200),
+            font_color: Color = (0, 0, 0),
+            width: int = 0,
+            border_radius: int = 0,
+            border_size: int = 0,
+            border_color: Color = (0, 0, 0),
+            clicked_color: Color = (200, 200, 200)
+            ):
         self.action = action
         self.text = text
         self.rect = rect
@@ -25,6 +39,8 @@ class Button:
         self.border_radius = border_radius
         self.border_size = border_size
         self.border_color = border_color
+        self.clicked_color = clicked_color
+        self.clicked = False
         self.highlight = False
 
     def draw(self, screen: pygame.Surface, overridde_highlight: bool = None):
