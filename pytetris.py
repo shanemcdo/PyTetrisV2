@@ -19,6 +19,7 @@ class MainMenu(MenuScreen):
             Button(lambda: print('Options'), 'Options', Rect(40, 410, 260, 100), font, border_size = 2),
             Button(sys.exit, 'Quit', Rect(40, 520, 260, 100), font, border_size = 2),
             ]
+        self.buttons[0].highlight = True
         # TODO: Create acutally good background / title <07-01-21, ShaneMcDonough>
         background = pygame.image.load('assets/menu_background.png')
         background_rect = background.get_rect()

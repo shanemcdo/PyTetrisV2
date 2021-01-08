@@ -26,7 +26,7 @@ class Button:
             border_radius: int = 0,
             border_size: int = 0,
             border_color: Color = (0, 0, 0),
-            clicked_color: Color = (200, 200, 200)
+            clicked_color: Color = (150, 150, 150)
             ):
         self.action = action
         self.text = text
@@ -44,7 +44,8 @@ class Button:
         self.highlight = False
 
     def draw(self, screen: pygame.Surface, overridde_highlight: bool = None):
-        pygame.draw.rect(screen, self.highlight_color if (overridde_highlight == None and self.highlight) or overridde_highlight else self.rect_color, self.rect, self.width, self.border_radius)
+        pygame.draw.rect(screen, self.clicked_color if self.clicked else self.highlight_color if (overridde_highlight == None and self.highlight) or overridde_highlight else self.rect_color, self.rect, self.width, self.border_radius)
+        self.clicked = False
         if self.border_size > 0:
             pygame.draw.rect(screen, self.border_color, self.rect, self.border_size, self.border_radius)
         text_obj = self.font.render(self.text, True, self.font_color)
@@ -54,6 +55,7 @@ class Button:
     def __call__(self):
         """Overwrite the () operator on the button object"""
         self.action()
+        self.clicked = True
 
 class GameScreen:
     """
