@@ -74,8 +74,27 @@ class GameScreen:
     def key_down(self, event: pygame.event.Event):
         pass
 
+    def key_up(self, event: pygame.event.Event):
+        pass
+
     def mouse_button_down(self, event: pygame.event.Event):
         pass
+
+    def mouse_button_up(self, event: pygame.event.Event):
+        pass
+
+    def handle_event(self, event: pygame.event.Event):
+        if event.type == QUIT:
+            sys.exit()
+        elif event.type == KEYDOWN:
+            self.key_down(event)
+        elif event.type == KEYUP:
+            self.key_up(event)
+        elif event.type == MOUSEBUTTONDOWN:
+            self.mouse_button_down(event)
+        elif event.type == MOUSEBUTTONUP:
+            self.mouse_button_up(event)
+
 
     def update(self):
         self.screen.fill((0, 0, 100))
@@ -85,12 +104,7 @@ class GameScreen:
         self.running = True
         while self.running:
             for event in pygame.event.get():
-                if event.type == QUIT:
-                    sys.exit()
-                elif event.type == KEYDOWN:
-                    self.key_down(event)
-                elif event.type == MOUSEBUTTONDOWN:
-                    self.mouse_button_down(event)
+                self.handle_event(event)
             self.update()
             pygame.display.update()
             self.clock.tick(self.frame_rate)
