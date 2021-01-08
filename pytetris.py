@@ -39,6 +39,7 @@ class Cell:
 
 
 class Peice:
+    """Represents a tetris peice or tetrimino"""
 
     def __init__(self, matrix: [[Cell]], board_size: Point, window_size: Point):
         self.matrix = matrix
