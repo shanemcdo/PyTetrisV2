@@ -5,6 +5,9 @@ from pygame.locals import *
 from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
 
+def new_matrix(width: int, height: int = None, value = None) -> [[]]:
+    return [[value for j in range(width)] for i in range(height if height else width)]
+
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
 
