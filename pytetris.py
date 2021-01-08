@@ -3,6 +3,7 @@
 import pygame, sys
 from pygame.locals import *
 from enum import Enum
+from random import randrange
 from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
 
@@ -58,6 +59,8 @@ class PyTetrisGame(GameScreen):
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
+        self.num_of_peices = len(Cell) - 1
+        print(self.num_of_peices)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.cell_size = Point(30, 30)
@@ -131,6 +134,13 @@ class PyTetrisGame(GameScreen):
                     self.window_size
                     ),
                 ]
+        self.grab_bag = []
+        self.player = self.get_from_grab_bag()
+
+    def get_from_grab_bag(self):
+        if not self.grab_bag:
+            self.grab_bag = self.peices.copy()
+        return self.grab_bag.pop(randrange(self.num_of_peices + 1))
 
     def draw_board(self):
         board_screen_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
@@ -144,7 +154,6 @@ class PyTetrisGame(GameScreen):
             for j, cell in enumerate(row):
                 if cell != Cell.EMPTY:
                     board_screen.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
-        # board_screen.blits([(self.peices[i].get_surface(self.cells, self.cell_size), ((0, i * self.cell_size.y * 4), (self.cell_size.x * 4, self.cell_size.y * 4))) for i in range(7)])
         board_center = board_screen.get_rect().center
         center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
         self.screen.blit(board_screen, center)
@@ -154,7 +163,7 @@ class PyTetrisGame(GameScreen):
         """Split an image into 7 surfaces to be used as tiles"""
         image = pygame.image.load(file_name)
         image_size = Point._make(image.get_size())
-        cell_size = Point(image_size.x // 7, image_size.y)
+        cell_size = Point(image_size.x // self.num_of_peices, image_size.y)
         return [pygame.transform.scale(clip_surface(image, Rect((x, 0), cell_size)), self.cell_size) for x in range(0, image_size.x, cell_size.x)]
 
     def update(self):
