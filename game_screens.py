@@ -125,7 +125,6 @@ class MenuScreen(GameScreen):
             button.draw(self.screen, True if i == self.button_index else None)
 
     def mouse_button_down(self, event: pygame.event.Event):
-        # TODO: change the self.button_index to the clicked button <07-01-21, Shane McDonough> #
         if event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
             for i, button in enumerate(self.buttons):
