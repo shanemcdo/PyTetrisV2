@@ -51,6 +51,38 @@ class Peice:
                     result.blit(cells[cell.value], (j * cell_size.x, i * cell_size.y))
         return result
 
+    def draw(self, cells: [pygame.Surface], cell_size: Point, screen: pygame.Surface):
+        """Draw the peice onto the board"""
+        screen.blit(self.get_surface(cells, cell_size), (cell_size.x * self.pos.x, cell_size.y * self.pos.y))
+
+    def move_down(self, board: [[Cell]]):
+        """Move the tetris peice down"""
+        self.move_to(board, Point(self.pos.x, self.pos.y + 1))
+
+    def move_left(self, board: [[Cell]]):
+        """Move the tetris peice left"""
+        self.move_to(board, Point(self.pos.x - 1, self.pos.y))
+
+    def move_right(self, board: [[Cell]]):
+        """Move the tetris peice right"""
+        self.move_to(board, Point(self.pos.x + 1, self.pos.y))
+
+    def move_to(self, board: [[Cell]], pos: Point):
+        if self.check_valid_position(board, pos):
+            print('yes')
+            self.pos = pos
+        else:
+            print('no')
+            self.pos = pos
+
+    def check_valid_position(self, board: [[Cell]], pos: Point) -> bool:
+        """Check if the position passed is avaliale for the this object"""
+        for i, row in enumerate(self.matrix):
+            for j, cell in enumerate(row):
+                if cell != Cell.EMPTY and not (pos.x + j >= 0 and pos.x + j < self.board_size.x and pos.y + i < self.board_size.y and board[i][j] == Cell.EMPTY):
+                    return False
+        return True
+
 class PyTetrisGame(GameScreen):
     """
     The pytetris game itself.
@@ -140,7 +172,7 @@ class PyTetrisGame(GameScreen):
     def get_from_grab_bag(self):
         if not self.grab_bag:
             self.grab_bag = self.peices.copy()
-        return self.grab_bag.pop(randrange(self.num_of_peices + 1))
+        return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
     def draw_board(self):
         board_screen_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
@@ -155,6 +187,7 @@ class PyTetrisGame(GameScreen):
                 if cell != Cell.EMPTY:
                     board_screen.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
         board_center = board_screen.get_rect().center
+        self.player.draw(self.cells, self.cell_size, board_screen)
         center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
         self.screen.blit(board_screen, center)
         pygame.draw.rect(self.screen, (100, 100, 100), (center, board_screen.get_size()), 1)
@@ -173,6 +206,12 @@ class PyTetrisGame(GameScreen):
     def key_down(self, event: pygame.event.Event):
         if event.key == K_ESCAPE:
             self.running = False
+        elif event.key == K_DOWN:
+            self.player.move_down(self.board)
+        elif event.key == K_LEFT:
+            self.player.move_left(self.board)
+        elif event.key == K_RIGHT:
+            self.player.move_right(self.board)
 
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
