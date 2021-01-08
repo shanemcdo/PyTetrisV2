@@ -148,7 +148,6 @@ class PyTetrisGame(GameScreen):
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.cell_size = Point(30, 30)
-        self.cells = self.load_cells_from_image('assets/peices.png')
         self.peices = [
                 Peice(
                     [
@@ -169,20 +168,18 @@ class PyTetrisGame(GameScreen):
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.L, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.L, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.L, Cell.L, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.L, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.L, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.L, Cell.L],
                         ],
                     self.board_size,
                     self.window_size
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.EMPTY, Cell.J, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.J, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.J, Cell.J, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.J, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.J, Cell.EMPTY],
+                        [Cell.J, Cell.J, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
@@ -199,26 +196,25 @@ class PyTetrisGame(GameScreen):
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.Z, Cell.Z, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.Z, Cell.Z],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.Z, Cell.Z, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.Z, Cell.Z],
                         ],
                     self.board_size,
                     self.window_size
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.S, Cell.S],
-                        [Cell.EMPTY, Cell.S, Cell.S, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.S, Cell.S],
+                        [Cell.S, Cell.S, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
                     ),
                 ]
         self.num_of_peices = len(self.peices)
+        self.cells = self.load_cells_from_image('assets/peices.png')
         self.grab_bag = []
         self.player = self.get_from_grab_bag()
 
