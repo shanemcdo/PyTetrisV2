@@ -40,6 +40,14 @@ class Peice:
         self.window_size = window_size
         self.pos = Point(board_size.x // 2 - self.matrix_size.x // 2, -4)
 
+    def get_cell_type(self) -> Cell:
+        """Find the first cell in the matrix and return it"""
+        for row in self.matrix:
+            for cell in row:
+                if cell != Cell.EMPTY:
+                    return cell
+        return Cell.EMPTY
+
     def get_surface(self, cells: [pygame.Surface], cell_size: Point) -> pygame.Surface:
         """Get a surface witht the given tetris peice on it"""
         # SRCALPHA allows the background to be transparent
@@ -227,7 +235,6 @@ class PyTetrisGame(GameScreen):
     def get_from_grab_bag(self, new_bag: bool = False):
         if new_bag or not hasattr(self, 'grab_bag') or not self.grab_bag:
             self.grab_bag = self.peices.copy()
-        print(self.grab_bag)
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
     def draw_board(self):
