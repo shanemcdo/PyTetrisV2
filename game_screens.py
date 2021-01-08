@@ -10,7 +10,7 @@ def new_matrix(width: int, height: int = None, value = None):
 class Button:
     """A button in a pygame application"""
 
-    def __init__(self, action: callable, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), highlight_color: Color = (255, 0, 0), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0, border_size: int = 0, border_color: int = (0, 0, 0)):
+    def __init__(self, action: callable, text: str, rect: Rect, font: pygame.font.Font, rect_color: Color = (255, 255, 255), highlight_color: Color = (200, 200, 200), font_color: Color = (0, 0, 0), width: int = 0, border_radius: int = 0, border_size: int = 0, border_color: int = (0, 0, 0)):
         self.action = action
         self.text = text
         self.rect = rect

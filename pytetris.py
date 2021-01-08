@@ -12,10 +12,12 @@ class PyTetrisMenu(MenuScreen):
         # font = pygame.font.SysFont('lucidaconsole', 60)
         font = pygame.font.Font('assets/tetris-atari.ttf', 30)
         self.buttons = [
-            Button(lambda: print('Play'), 'Play', Rect(20, 240, 260, 100), font, border_size = 2),
-            Button(lambda: print('Options'), 'Options', Rect(20, 350, 260, 100), font, border_size = 2),
-            Button(sys.exit, 'Quit', Rect(20, 460, 260, 100), font, border_size = 2),
+            Button(lambda: print('Play'), 'Play', Rect(40, 190, 260, 100), font, border_size = 2),
+            Button(lambda: print('Controls'), 'Controls', Rect(40, 300, 260, 100), font, border_size = 2),
+            Button(lambda: print('Options'), 'Options', Rect(40, 410, 260, 100), font, border_size = 2),
+            Button(sys.exit, 'Quit', Rect(40, 520, 260, 100), font, border_size = 2),
             ]
+        self.buttons[0].highlight = True
         # TODO: Create acutally good background / title <07-01-21, ShaneMcDonough>
         background = pygame.image.load('assets/menu_background.png')
         background_rect = background.get_rect()
