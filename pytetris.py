@@ -145,9 +145,9 @@ class PyTetrisGame(GameScreen):
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
+        self.cell_size = Point(30, 30)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
-        self.cell_size = Point(30, 30)
         self.peices = [
                 Peice(
                     [
@@ -215,11 +215,14 @@ class PyTetrisGame(GameScreen):
                 ]
         self.num_of_peices = len(self.peices)
         self.cells = self.load_cells_from_image('assets/peices.png')
-        self.grab_bag = []
-        self.player = self.get_from_grab_bag()
+        self.reset()
 
-    def get_from_grab_bag(self):
-        if not self.grab_bag:
+    def reset(self):
+        self.player = self.get_from_grab_bag(True)
+        print(self.grab_bag)
+
+    def get_from_grab_bag(self, new_bag: bool = False):
+        if new_bag or not has_attr(self, 'grab_bag') or not self.grab_bag:
             self.grab_bag = self.peices.copy()
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
