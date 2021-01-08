@@ -55,25 +55,23 @@ class Peice:
         """Draw the peice onto the board"""
         screen.blit(self.get_surface(cells, cell_size), (cell_size.x * self.pos.x, cell_size.y * self.pos.y))
 
-    def move_down(self, board: [[Cell]]):
+    def move_down(self, board: [[Cell]]) -> bool:
         """Move the tetris peice down"""
-        self.move_to(board, Point(self.pos.x, self.pos.y + 1))
+        if not self.move_to(board, Point(self.pos.x, self.pos.y + 1)):
+            self.lock(board)
 
-    def move_left(self, board: [[Cell]]):
+    def move_left(self, board: [[Cell]]) -> bool:
         """Move the tetris peice left"""
         self.move_to(board, Point(self.pos.x - 1, self.pos.y))
 
-    def move_right(self, board: [[Cell]]):
+    def move_right(self, board: [[Cell]]) -> bool:
         """Move the tetris peice right"""
         self.move_to(board, Point(self.pos.x + 1, self.pos.y))
 
-    def move_to(self, board: [[Cell]], pos: Point):
-        if self.check_valid_position(board, pos):
-            print('yes')
+    def move_to(self, board: [[Cell]], pos: Point) -> bool:
+        if valid := self.check_valid_position(board, pos):
             self.pos = pos
-        else:
-            print('no')
-            self.pos = pos
+        return valid
 
     def check_valid_position(self, board: [[Cell]], pos: Point) -> bool:
         """Check if the position passed is avaliale for the this object"""
@@ -82,6 +80,13 @@ class Peice:
                 if cell != Cell.EMPTY and not (pos.x + j >= 0 and pos.x + j < self.board_size.x and pos.y + i < self.board_size.y and board[i][j] == Cell.EMPTY):
                     return False
         return True
+
+    def lock(self, board: [[Cell]]):
+        """Lock the peice in place on the board"""
+        for i, row in enumerate(self.matrix):
+            for j, cell in enumerate(row):
+                if cell != Cell.EMPTY:
+                    board[i + self.pos.y][j + self.pos.x] = cell
 
 class PyTetrisGame(GameScreen):
     """
@@ -212,6 +217,10 @@ class PyTetrisGame(GameScreen):
             self.player.move_left(self.board)
         elif event.key == K_RIGHT:
             self.player.move_right(self.board)
+        elif event.key == K_SPACE:
+            self.player.lock(self.board)
+        elif event.key == K_r:
+            self.player = self.get_from_grab_bag()
 
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
