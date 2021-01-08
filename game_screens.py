@@ -69,18 +69,19 @@ class GameScreen:
         self.clock = pygame.time.Clock()
 
     def key_down(self, event: pygame.event.Event):
-        pass
+        """Function called when a pygame KEYDOWN event is triggered"""
 
     def key_up(self, event: pygame.event.Event):
-        pass
+        """Function called when a pygame KEYUP event is triggered"""
 
     def mouse_button_down(self, event: pygame.event.Event):
-        pass
+        """Function called when a pygame MOUSEBUTTONDOWN event is triggered"""
 
     def mouse_button_up(self, event: pygame.event.Event):
-        pass
+        """Function called when a pygame key_down MOUSEBUTTONDOWN is triggered"""
 
     def handle_event(self, event: pygame.event.Event):
+        """Handle a pygame events"""
         if event.type == QUIT:
             sys.exit()
         elif event.type == KEYDOWN:
@@ -92,8 +93,8 @@ class GameScreen:
         elif event.type == MOUSEBUTTONUP:
             self.mouse_button_up(event)
 
-
     def update(self):
+        """Run every frame, meant for drawing and update logic"""
         self.screen.fill((0, 0, 100))
 
     def run(self):
