@@ -128,6 +128,7 @@ class MenuScreen(GameScreen):
         # TODO: change the self.button_index to the clicked button <07-01-21, Shane McDonough> #
         if event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
-            for button in self.buttons:
+            for i, button in enumerate(self.buttons):
                 if button.rect.collidepoint(mouse_pos):
+                    self.button_index = i
                     button()
