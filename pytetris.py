@@ -6,7 +6,41 @@ from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
 
 def new_matrix(width: int, height: int = None, value = None) -> [[]]:
+    """Create a 2d array with the passed width and height"""
     return [[value for j in range(width)] for i in range(height if height else width)]
+
+def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
+    """Copy part of a pygame.Surface"""
+    cropped = pygame.Surface(rect.size)
+    cropped.blit(surface, (0, 0), rect)
+    return cropped
+
+def load_cells_from_image(file_name: str, peice_count: int = 7) -> [pygame.Surface]:
+    """Split an image into 7 surfaces to be used as tiles"""
+    image = pygame.image.load(file_name)
+    image_size = Point._make(image.get_size())
+    cell_size = Point(image_size.x // peice_count, image_size.y)
+    return [clip_surface(image, Rect((x, 0), cell_size)) for x in range(0, image_size.x, cell_size.x)]
+
+class Cell:
+    """Represents a square on the grid"""
+    CELLS = load_cells_from_image('assets/peices.png')
+    EMPTY = None
+    RED = CELLS[0]
+    ORANGE = CELLS[1]
+    YELLOW = CELLS[2]
+    GREEN = CELLS[3]
+    CYAN = CELLS[4]
+    BLUE = CELLS[5]
+    PURPLE = CELLS[6]
+
+class Peice:
+
+    def __init__(self, matrix: [[Cell]], board_size: Point, window_size: Point):
+        self.matrix = matrix
+        self.board_size = board_size
+        self.window_size = window_size
+        self.pos = Point(board_size // 2 - 2, -4)
 
 class PyTetrisGame(GameScreen):
     """
@@ -16,6 +50,8 @@ class PyTetrisGame(GameScreen):
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
+        self.board_size = Point(10, 20)
+        self.board = new_matrix(self.board_size.x, self.board_size.y, ' ')
 
     def key_down(self, event: pygame.event.Event):
         if event.key == K_ESCAPE:
@@ -45,8 +81,8 @@ class MainMenu(MenuScreen):
 
     def update(self):
         self.screen.fill((0, 0, 0))
-        screen.blit(self.background, self.background_rect)
-        screen.blit(self.title, (50, 50))
+        self.screen.blit(self.background, self.background_rect)
+        self.screen.blit(self.title, (50, 50))
         super().update()
 
 if __name__ == "__main__":
