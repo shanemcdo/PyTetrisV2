@@ -145,7 +145,6 @@ class PyTetrisGame(GameScreen):
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
-        self.num_of_peices = len(Cell) - 1
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.cell_size = Point(30, 30)
@@ -219,6 +218,7 @@ class PyTetrisGame(GameScreen):
                     self.window_size
                     ),
                 ]
+        self.num_of_peices = len(self.peices)
         self.grab_bag = []
         self.player = self.get_from_grab_bag()
 
