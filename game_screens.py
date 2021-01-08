@@ -27,8 +27,8 @@ class Button:
         self.border_color = border_color
         self.highlight = False
 
-    def draw(self, screen: pygame.Surface):
-        pygame.draw.rect(screen, self.highlight_color if self.highlight else self.rect_color, self.rect, self.width, self.border_radius)
+    def draw(self, screen: pygame.Surface, overridde_highlight: bool = None):
+        pygame.draw.rect(screen, self.highlight_color if (overridde_highlight == None and self.highlight) or overridde_highlight else self.rect_color, self.rect, self.width, self.border_radius)
         if self.border_size > 0:
             pygame.draw.rect(screen, self.border_color, self.rect, self.border_size, self.border_radius)
         text_obj = self.font.render(self.text, True, self.font_color)
