@@ -54,10 +54,10 @@ class GameScreen:
         self.rect = self.screen.get_rect()
         self.clock = pygame.time.Clock()
 
-    def keyboard_input(self, event: pygame.event.Event):
+    def key_down(self, event: pygame.event.Event):
         print(event)
 
-    def mouse_input(self, event: pygame.event.Event):
+    def mouse_button_down(self, event: pygame.event.Event):
         # maybe change this function to on mouse click because
         # this function cannot do hovering
         print(event)
@@ -73,9 +73,9 @@ class GameScreen:
                 if event.type == QUIT:
                     sys.exit()
                 elif event.type == KEYDOWN:
-                    self.keyboard_input(event)
+                    self.key_down(event)
                 elif event.type == MOUSEBUTTONDOWN:
-                    self.mouse_input(event)
+                    self.mouse_button_down(event)
             self.update()
             pygame.display.update()
             self.clock.tick(self.frame_rate)
@@ -91,7 +91,7 @@ class MenuScreen(GameScreen):
         self.buttons = []
         self.button_index = 0
 
-    def keyboard_input(self, event: pygame.event.Event):
+    def key_down(self, event: pygame.event.Event):
         if event.key == K_UP or event.key == K_RIGHT or event.key == K_DOWN or event.key == K_LEFT:
             self.buttons[self.button_index].highlight = False
             if event.key == K_DOWN or event.key == K_RIGHT:
@@ -111,7 +111,7 @@ class MenuScreen(GameScreen):
         for button in self.buttons:
             button.draw(self.screen)
 
-    def mouse_input(self, event: pygame.event.Event):
+    def mouse_button_down(self, event: pygame.event.Event):
         # TODO: change the self.button_index to the clicked button <07-01-21, Shane McDonough> #
         if event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
