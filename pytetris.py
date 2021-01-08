@@ -22,13 +22,13 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
 class Cell(Enum):
     """Represents a square on the grid"""
     EMPTY = None
-    RED = 0
-    ORANGE = 1
-    YELLOW = 2
-    GREEN = 3
-    CYAN = 4
-    BLUE = 5
-    PURPLE = 6
+    Z = 0
+    L = 1
+    O = 2
+    S = 3
+    I = 4
+    J = 5
+    T = 6
 
 class Peice:
     """Represents a tetris peice or tetrimino"""
@@ -105,16 +105,16 @@ class PyTetrisGame(GameScreen):
         self.peices = [
                 Peice(
                     [
-                        [Cell.YELLOW, Cell.YELLOW],
-                        [Cell.YELLOW, Cell.YELLOW],
+                        [Cell.O, Cell.O],
+                        [Cell.O, Cell.O],
                         ],
                     self.board_size,
                     self.window_size
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.PURPLE, Cell.EMPTY],
-                        [Cell.PURPLE, Cell.PURPLE, Cell.PURPLE],
+                        [Cell.EMPTY, Cell.T, Cell.EMPTY],
+                        [Cell.T, Cell.T, Cell.T],
                         [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
@@ -122,9 +122,9 @@ class PyTetrisGame(GameScreen):
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.ORANGE, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.ORANGE, Cell.ORANGE, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.L, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.L, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.L, Cell.L, Cell.EMPTY],
                         [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
@@ -132,9 +132,9 @@ class PyTetrisGame(GameScreen):
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.BLUE, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.BLUE, Cell.BLUE, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.J, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.J, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.J, Cell.J, Cell.EMPTY],
                         [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
@@ -142,10 +142,10 @@ class PyTetrisGame(GameScreen):
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.CYAN, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
@@ -153,8 +153,8 @@ class PyTetrisGame(GameScreen):
                 Peice(
                     [
                         [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.RED, Cell.RED, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.RED, Cell.RED],
+                        [Cell.EMPTY, Cell.Z, Cell.Z, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.Z, Cell.Z],
                         [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
@@ -163,8 +163,8 @@ class PyTetrisGame(GameScreen):
                 Peice(
                     [
                         [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.EMPTY, Cell.GREEN, Cell.GREEN],
-                        [Cell.EMPTY, Cell.GREEN, Cell.GREEN, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.S, Cell.S],
+                        [Cell.EMPTY, Cell.S, Cell.S, Cell.EMPTY],
                         [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
