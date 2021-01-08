@@ -73,9 +73,57 @@ class Peice:
             self.pos = pos
         return valid
 
-    def check_valid_position(self, board: [[Cell]], pos: Point) -> bool:
+    def rotate_right(self, board: [[Cell]]) -> bool:
+        """
+        Rotate a peice's matrix 90 degrees to the right
+        matrix can be any size as long and width and height are the same
+            ^^^^ make it work with other sizes
+        e.g.:
+            Matrix:
+                +--+--+--+--+      +--+--+--+--+
+                |00|01|02|03|      |30|20|10|00|
+                +--+--+--+--+      +--+--+--+--+
+                |10|11|12|13|      |31|21|11|01|
+                +--+--+--+--+ ---> +--+--+--+--+
+                |20|21|22|23|      |32|22|12|02|
+                +--+--+--+--+      +--+--+--+--+
+                |30|31|32|33|      |33|23|13|03|
+                +--+--+--+--+      +--+--+--+--+
+        """
+        matrix = [[self.matrix[self.matrix_size.y - j - 1][i] for j in range(self.matrix_size.x)] for i in range(self.matrix_size.y)]
+        if rotated := self.check_valid_position(board, peice_matrix = matrix):
+            self.matrix = matrix
+        return rotated
+
+    def rotate_left(self, board: [[Cell]]):
+        """
+        Rotate a peice's matrix 90 degrees to the left
+        matrix can be any size as long and width and height are the same
+        e.g.:
+            Matrix:
+                +--+--+--+--+      +--+--+--+--+
+                |00|01|02|03|      |03|13|23|33|
+                +--+--+--+--+      +--+--+--+--+
+                |10|11|12|13|      |02|12|22|22|
+                +--+--+--+--+ ---> +--+--+--+--+
+                |20|21|22|23|      |01|11|21|31|
+                +--+--+--+--+      +--+--+--+--+
+                |30|31|32|33|      |00|10|20|30|
+                +--+--+--+--+      +--+--+--+--+
+        """
+        matrix = [[self.matrix[j][self.matrix_size.x - i - 1] for j in range(self.matrix_size.x)] for i in range(self.matrix_size.y)]
+        if rotated := self.check_valid_position(board, peice_matrix = matrix):
+            self.matrix = matrix
+        # TODO: Push the matrix around if it can't rotate <08-01-21, Shane McDonough> #
+        return rotated
+
+    def check_valid_position(self, board: [[Cell]], pos: Point = None, peice_matrix: [[Cell]] = None) -> bool:
         """Check if the position passed is avaliale for the this object"""
-        for i, row in enumerate(self.matrix):
+        if not peice_matrix:
+            peice_matrix = self.matrix
+        if not pos:
+            pos = self.pos
+        for i, row in enumerate(peice_matrix):
             for j, cell in enumerate(row):
                 if cell != Cell.EMPTY and not (pos.x + j >= 0 and pos.x + j < self.board_size.x and pos.y + i < self.board_size.y and board[i + pos.y][j + pos.x] == Cell.EMPTY):
                     return False
@@ -210,14 +258,18 @@ class PyTetrisGame(GameScreen):
     def key_down(self, event: pygame.event.Event):
         if event.key == K_ESCAPE:
             self.running = False
-        elif event.key == K_DOWN:
+        elif event.key == K_s:
             self.player.move_down(self.board)
-        elif event.key == K_LEFT:
+        elif event.key == K_a:
             self.player.move_left(self.board)
-        elif event.key == K_RIGHT:
+        elif event.key == K_d:
             self.player.move_right(self.board)
-        elif event.key == K_SPACE:
+        elif event.key == K_w:
             self.player.lock(self.board)
+        elif event.key == K_e:
+            self.player.rotate_right(self.board)
+        elif event.key == K_q:
+            self.player.rotate_left(self.board)
         elif event.key == K_r:
             self.player = self.get_from_grab_bag()
 
