@@ -219,11 +219,15 @@ class PyTetrisGame(GameScreen):
 
     def reset(self):
         self.player = self.get_from_grab_bag(True)
-        print(self.grab_bag)
+
+    def exit(self):
+        self.reset()
+        self.running = False
 
     def get_from_grab_bag(self, new_bag: bool = False):
-        if new_bag or not has_attr(self, 'grab_bag') or not self.grab_bag:
+        if new_bag or not hasattr(self, 'grab_bag') or not self.grab_bag:
             self.grab_bag = self.peices.copy()
+        print(self.grab_bag)
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
     def draw_board(self):
@@ -257,7 +261,7 @@ class PyTetrisGame(GameScreen):
 
     def key_down(self, event: pygame.event.Event):
         if event.key == K_ESCAPE:
-            self.running = False
+            self.exit()
         elif event.key == K_s:
             self.player.move_down(self.board)
         elif event.key == K_a:
