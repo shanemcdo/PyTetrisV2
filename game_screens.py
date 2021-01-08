@@ -78,15 +78,10 @@ class MenuScreen(GameScreen):
     e.g.: Main menu, Pause menu, Options
     """
 
-    def __init__(self, screen :pygame.Surface, window_size: Point, frame_rate: int = 30):
+    def __init__(self, screen: pygame.Surface, window_size: Point, frame_rate: int = 30):
         super().__init__(screen, window_size, frame_rate)
-        self.buttons = [
-                Button(lambda: print(1), 'Button!', Rect(20, 40, 100, 50), pygame.font.SysFont('arial', 20)),
-                Button(lambda: print(2), 'Another Button!', Rect(20, 100, 150, 50), pygame.font.SysFont('arial', 20)),
-                Button(lambda: print(3), 'Third!', Rect(20, 160, 60, 50), pygame.font.SysFont('arial', 20)),
-                ]
+        self.buttons = []
         self.button_index = 0
-        self.buttons[self.button_index].highlight = True
 
     def keyboard_input(self, event: pygame.event.Event):
         if event.key == K_UP or event.key == K_RIGHT or event.key == K_DOWN or event.key == K_LEFT:
