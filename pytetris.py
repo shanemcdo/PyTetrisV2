@@ -409,8 +409,8 @@ class PyTetrisGame(GameScreen):
                 if cell != Cell.EMPTY:
                     self.board_surface.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
         # draw the player on the board
-        self.player.draw(self.cells, self.cell_size, self.board_surface)
         self.player.draw_shadow(self.shadows, self.cell_size, self.board_surface, self.board)
+        self.player.draw(self.cells, self.cell_size, self.board_surface)
         # draw board to the screen
         self.screen.blit(self.board_surface, self.board_surface_pos)
         # draw border around board
