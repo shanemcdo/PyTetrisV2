@@ -397,15 +397,12 @@ class PyTetrisGame(GameScreen):
         return self.queue.pop(0)
 
     def reset(self):
-        self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
-        self.queue = []
-        for i in range(self.queue_size):
-            self.queue.append(self.get_from_grab_bag(i == 0))
-        self.player = self.get_from_queue()
         self.level = 0
         self.can_swap_hold = True
         self.hold = None
+        self.ARE_locked = False
         self.delay_counters = {
+                'ARE_lock': TrueEvery(self.ARE_DELAY, once = True, start_value = self.ARE_DELAY),
                 'soft_drop': TrueEvery(self.SOFT_DROP_DELAY),
                 'auto_drop': TrueEvery(self.LEVEL_FRAMES[self.level]),
                 'DAS_fast_drop': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
@@ -414,6 +411,11 @@ class PyTetrisGame(GameScreen):
                 'DAS_rotate_left': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 'DAS_rotate_right': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 }
+        self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
+        self.queue = []
+        for i in range(self.queue_size):
+            self.queue.append(self.get_from_grab_bag(i == 0))
+        self.player = self.get_from_queue()
 
     def exit(self):
         self.reset()
@@ -487,6 +489,8 @@ class PyTetrisGame(GameScreen):
         self.draw_board()
         self.draw_hold()
         self.draw_queue()
+        if self.delay_counters['ARE_lock']():
+            self.ARE_locked = False
         self.keyboard_input()
         self.auto_drop()
 
@@ -496,10 +500,12 @@ class PyTetrisGame(GameScreen):
         self.player = self.get_from_queue()
         self.clear_lines()
         self.can_swap_hold = True
+        self.delay_counters['ARE_lock'].reset()
+        self.ARE_locked = True
 
     def auto_drop(self):
         """Move the peice down one and lock if it cannot go farther down"""
-        if self.delay_counters['auto_drop']():
+        if self.delay_counters['auto_drop']() and not self.ARE_locked:
             if not self.player.move_down(self.board):
                 self.lock_and_get_new_peice()
 
@@ -507,20 +513,21 @@ class PyTetrisGame(GameScreen):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
         keys = pygame.key.get_pressed()
         if keys[K_ESCAPE]: self.exit()
-        if self.delay_counters['soft_drop'].run_or_reset(keys[K_s]):
-            self.player.move_down(self.board)
-            self.delay_counters['auto_drop'].reset()
-        if self.delay_counters['DAS_fast_drop'].run_or_reset(keys[K_w]):
-            self.player.fast_drop(self.board)
-            self.lock_and_get_new_peice()
-        if self.delay_counters['DAS_move_left'].run_or_reset(keys[K_a]):
-            self.player.move_left(self.board)
-        if self.delay_counters['DAS_move_right'].run_or_reset(keys[K_d]):
-            self.player.move_right(self.board)
-        if self.delay_counters['DAS_rotate_left'].run_or_reset(keys[K_q]):
-            self.player.rotate_left(self.board)
-        if self.delay_counters['DAS_rotate_right'].run_or_reset(keys[K_e]):
-            self.player.rotate_right(self.board)
+        if not self.ARE_locked:
+            if self.delay_counters['soft_drop'].run_or_reset(keys[K_s]):
+                self.player.move_down(self.board)
+                self.delay_counters['auto_drop'].reset()
+            if self.delay_counters['DAS_fast_drop'].run_or_reset(keys[K_w]):
+                self.player.fast_drop(self.board)
+                self.lock_and_get_new_peice()
+            if self.delay_counters['DAS_move_left'].run_or_reset(keys[K_a]):
+                self.player.move_left(self.board)
+            if self.delay_counters['DAS_move_right'].run_or_reset(keys[K_d]):
+                self.player.move_right(self.board)
+            if self.delay_counters['DAS_rotate_left'].run_or_reset(keys[K_q]):
+                self.player.rotate_left(self.board)
+            if self.delay_counters['DAS_rotate_right'].run_or_reset(keys[K_e]):
+                self.player.rotate_right(self.board)
         if keys[K_SPACE]:
             self.swap_hold()
 
