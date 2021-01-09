@@ -340,17 +340,13 @@ class PyTetrisGame(GameScreen):
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.player = self.get_from_grab_bag(True)
         self.level = 0
-        self.das_inital = True
-        self.das_rotate_inital = True
-        self.das_fast_drop_inital = True
-        self.delay_counters = {
-                'fast_drop': 0,
-                'auto_drop': 0,
-                'soft_drop': 0,
-                'DAS': 0,
-                'DAS_rotate': 0,
-                'ARE': 0,
-                }
+        self.delayed_auto_drop = CallOnceEvery(self.LEVEL_FRAMES[self.level], self.auto_drop) # TODO: Update this on levelup
+        self.delayed_soft_drop = CallOnceEvery(self.SOFT_DROP_DELAY, self.player.move_down, (self.board,))
+        self.delayed_fast_drop = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.fast_drop, (self.board,), self.DAS_INITIAL_DELAY)
+        self.delayed_move_left = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.move_left, (self.board,), self.DAS_INITIAL_DELAY)
+        self.delayed_move_right = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.move_right, (self.board,), self.DAS_INITIAL_DELAY)
+        self.delayed_rotate_left = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.rotate_left, (self.board,), self.DAS_INITIAL_DELAY)
+        self.delayed_rotate_right = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.rotate_right, (self.board,), self.DAS_INITIAL_DELAY)
 
     def exit(self):
         self.reset()
@@ -395,62 +391,49 @@ class PyTetrisGame(GameScreen):
         # for i, s in enumerate([self.clock.get_time(), self.clock.get_fps(), self.delay_counters['soft_drop'], self.delay_counters['DAS']]):
         #     self.screen.blit(font.render(str(s), True, (255, 255, 255)), (0, i * 60))
         self.keyboard_input()
-        self.auto_drop()
+        self.delayed_auto_drop()
 
     def auto_drop(self):
         """Move the peice down one and lock if it cannot go farther down"""
-        self.delay_counters['auto_drop'] -= 1
-        if self.delay_counters['auto_drop'] < 1:
-            self.delay_counters['auto_drop'] += self.LEVEL_FRAMES[self.level]
-            if not self.player.move_down(self.board):
-                self.player.lock(self.board)
-                self.player = self.get_from_grab_bag()
+        if not self.player.move_down(self.board):
+            self.player.lock(self.board)
+            self.player = self.get_from_grab_bag()
+            # update self.delayed_*_* objects to work with new peice
+            self.delayed_fast_drop.target = self.player.fast_drop
+            self.delayed_soft_drop.target = self.player.move_down
+            self.delayed_move_left.target = self.player.move_left
+            self.delayed_move_right.target = self.player.move_right
+            self.delayed_rotate_left.target = self.player.rotate_right
+            self.delayed_rotate_right.target = self.player.rotate_left
 
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
         keys = pygame.key.get_pressed()
-        if keys[K_ESCAPE]:
-            self.exit()
+        if keys[K_ESCAPE]: self.exit()
         if keys[K_s]:
-            self.delay_counters['soft_drop'] -= 1
-            if self.delay_counters['soft_drop'] < 1:
-                self.delay_counters['soft_drop'] += self.SOFT_DROP_DELAY
-                self.player.move_down(self.board)
+            self.delayed_soft_drop()
         else:
-            self.delay_counters['soft_drop'] = 0
-        if keys[K_a] or keys[K_d]:
-            self.delay_counters['DAS'] -= 1
-            if self.delay_counters['DAS'] < 1:
-                self.delay_counters['DAS'] += self.DAS_INITIAL_DELAY if self.das_rotate_inital else self.DAS_REPEAT_DELAY
-                self.das_rotate_inital = False
-                if keys[K_a]:
-                    self.player.move_left(self.board)
-                else:
-                    self.player.move_right(self.board)
+            self.delayed_soft_drop.reset()
+        if keys[K_a]:
+            self.delayed_move_left()
         else:
-            self.delay_counters['DAS'] = 0
-            self.das_inital = True
+            self.delayed_move_left.reset()
+        if keys[K_d]:
+            self.delayed_move_right()
+        else:
+            self.delayed_move_right.reset()
         if keys[K_w]:
-            self.delay_counters['fast_drop'] -= 1
-            if self.delay_counters['fast_drop']:
-                self.delay_counters['fast_drop'] += self.DAS_INITIAL_DELAY if self.das_fast_drop_inital else self.DAS_REPEAT_DELAY
-                self.das_fast_drop_inital = False
-                self.player.fast_drop(self.board)
+            self.delayed_fast_drop()
         else:
-            self.delay_counters['fast_drop'] = 0
-            self.das_fast_drop_inital = True
-        if keys[K_e] or keys[K_q]:
-            self.delay_counters['DAS_repeat'] -= 1
-            if self.delay_counters['DAS_repeat'] < 1:
-                self.delay_counters['DAS_repeat'] += self.DAS_INITIAL_DELAY if self.das_inital else self.DAS_REPEAT_DELAY
-                self.das_inital = False
-                if keys[K_e]:
-                    self.player.rotate_right(self.board)
-                else:
-                    self.player.rotate_left(self.board)
+            self.delayed_fast_drop.reset()
+        if keys[K_q]:
+            self.delayed_rotate_left()
         else:
-            self.delay_counters['DAS_repeat'] = 0
-            self.das_inital = True
+            self.delayed_rotate_left.reset()
+        if keys[K_e]:
+            self.delayed_rotate_right()
+        else:
+            self.delayed_rotate_right.reset()
 
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
