@@ -194,11 +194,13 @@ class Peice:
                 if cell != Cell.EMPTY:
                     board[i + self.pos.y][j + self.pos.x] = cell
 
+# TODO: Show queue, hold, and maybe grab_bag
 class PyTetrisGame(GameScreen):
     """
     The pytetris game itself.
     runs the game logic
     """
+
     SCORE_DICT = {
             # TODO
             }
