@@ -43,6 +43,14 @@ class TrueEvery:
             first_call = False
             return True
 
+    def reset(self, override_start_value: int = None):
+        """
+        reset {self.calls}, and {self.first_call}
+        :override_start_value: Optional. Defaults to self.start_value. set a new start value instead of the one in the constructor
+        """
+        self.calls = override_start_value if override_start_value != None else self.start_value
+        self.first_call = True
+
 class CallOnceEvery:
     def __init__(self, count: int, target: callable, args: tuple = (), initial_count: int = None, once: bool = False):
         """
