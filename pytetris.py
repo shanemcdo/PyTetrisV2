@@ -313,17 +313,23 @@ class PyTetrisGame(GameScreen):
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
     def draw_board(self):
+        # make board a black screen
         self.board_surface.fill((0, 0, 0))
+        # draw board lines
         for i in range(1, self.board_size.x):
             pygame.draw.line(self.board_surface, (100, 100, 100), (i * self.cell_size.x, 0), (i * self.cell_size.x, self.board_surface_size.y))
         for i in range(1, self.board_size.y):
             pygame.draw.line(self.board_surface, (100, 100, 100), (0, i * self.cell_size.y), (self.board_surface_size.y, i * self.cell_size.x))
+        # draw the contents of the board
         for i, row in enumerate(self.board):
             for j, cell in enumerate(row):
                 if cell != Cell.EMPTY:
                     self.board_surface.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
+        # draw the player on the board
         self.player.draw(self.cells, self.cell_size, self.board_surface)
+        # draw board to the screen
         self.screen.blit(self.board_surface, self.board_surface_pos)
+        # draw border around board
         pygame.draw.rect(self.screen, (100, 100, 100), (self.board_surface_pos, self.board_surface_size), 1)
 
     def load_cells_from_image(self, file_name: str) -> [pygame.Surface]:
