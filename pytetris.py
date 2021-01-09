@@ -305,6 +305,8 @@ class PyTetrisGame(GameScreen):
         self.player = self.get_from_grab_bag(True)
         self.level = 0
         self.das_inital = True
+        self.das_rotate_inital = True
+        self.das_fast_drop_inital = True
         self.delay_counters = {
                 'fast_drop': 0,
                 'auto_drop': 0,
@@ -383,8 +385,8 @@ class PyTetrisGame(GameScreen):
         if keys[K_a] or keys[K_d]:
             self.delay_counters['DAS'] -= 1
             if self.delay_counters['DAS'] < 1:
-                self.delay_counters['DAS'] += self.DAS_INITIAL_DELAY if self.das_inital else self.DAS_REPEAT_DELAY
-                self.das_inital = False
+                self.delay_counters['DAS'] += self.DAS_INITIAL_DELAY if self.das_rotate_inital else self.DAS_REPEAT_DELAY
+                self.das_rotate_inital = False
                 if keys[K_a]:
                     self.player.move_left(self.board)
                 else:
@@ -395,10 +397,12 @@ class PyTetrisGame(GameScreen):
         if keys[K_w]:
             self.delay_counters['fast_drop'] -= 1
             if self.delay_counters['fast_drop']:
+                self.delay_counters['fast_drop'] += self.DAS_INITIAL_DELAY if self.das_fast_drop_inital else self.DAS_REPEAT_DELAY
+                self.das_fast_drop_inital = False
                 self.player.fast_drop(self.board)
-                self.delay_counters['fast_drop'] += self.DAS_INITIAL_DELAY
         else:
             self.delay_counters['fast_drop'] = 0
+            self.das_fast_drop_inital = True
         if keys[K_e] or keys[K_q]:
             self.delay_counters['DAS_repeat'] -= 1
             if self.delay_counters['DAS_repeat'] < 1:
