@@ -38,7 +38,7 @@ class Peice:
         self.matrix_size = Point(len(matrix[0]), len(matrix))
         self.board_size = board_size
         self.window_size = window_size
-        self.pos = Point(board_size.x // 2 - self.matrix_size.x // 2, -4)
+        self.pos = Point(board_size.x // 2 - self.matrix_size.x // 2, 0)
 
     def get_cell_type(self) -> Cell:
         """Find the first cell in the matrix and return it"""
@@ -223,6 +223,7 @@ class PyTetrisGame(GameScreen):
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
+        pygame.key.set_repeat(1)
         self.cell_size = Point(30, 30)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
