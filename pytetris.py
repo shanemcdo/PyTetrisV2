@@ -76,7 +76,11 @@ class Peice:
         self.matrix_size = Point(len(matrix[0]), len(matrix))
         self.board_size = board_size
         self.window_size = window_size
-        self.pos = Point(board_size.x // 2 - self.matrix_size.x // 2, 0)
+        self.reset()
+
+    def reset(self):
+        """resets the position of the Peice to the top"""
+        self.pos = Point(self.board_size.x // 2 - self.matrix_size.x // 2, 0)
 
     def get_cell_type(self) -> Cell:
         """Find the first cell in the matrix and return it"""
@@ -373,11 +377,21 @@ class PyTetrisGame(GameScreen):
                 lines += 1
         return lines
 
+    def remap_delayed_functions(self):
+        """"Update the new playerdata to the delayed functions that need them """
+        self.delayed_fast_drop.target = self.player.fast_drop
+        self.delayed_soft_drop.target = self.player.move_down
+        self.delayed_move_left.target = self.player.move_left
+        self.delayed_move_right.target = self.player.move_right
+        self.delayed_rotate_left.target = self.player.rotate_right
+        self.delayed_rotate_right.target = self.player.rotate_left
 
     def reset(self):
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.player = self.get_from_grab_bag(True)
         self.level = 0
+        self.can_swap_hold = True
+        self.hold = None
         self.delayed_auto_drop = CallOnceEvery(self.LEVEL_FRAMES[self.level], self.auto_drop) # TODO: Update this on levelup
         self.delayed_soft_drop = CallOnceEvery(self.SOFT_DROP_DELAY, self.player.move_down, (self.board,))
         self.delayed_fast_drop = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.fast_drop, (self.board,), self.DAS_INITIAL_DELAY)
@@ -423,6 +437,18 @@ class PyTetrisGame(GameScreen):
         cell_size = Point(image_size.x // self.num_of_peices, image_size.y)
         return [pygame.transform.scale(clip_surface(image, Rect((x, 0), cell_size)), self.cell_size) for x in range(0, image_size.x, cell_size.x)]
 
+    def swap_hold(self):
+        """"Swap the current peice with the peice in self.hold"""
+        if self.can_swap_hold:
+            self.can_swap_hold = False
+            if not self.hold:
+                self.hold = self.get_from_grab_bag()
+            temp = self.hold
+            self.hold = self.player
+            self.player = temp
+            self.player.reset()
+            self.remap_delayed_functions()
+
     def update(self):
         self.screen.fill((0, 0, 0))
         self.draw_board()
@@ -438,14 +464,11 @@ class PyTetrisGame(GameScreen):
             self.player.lock(self.board)
             self.player = self.get_from_grab_bag()
             # update self.delayed_*_* objects to work with new peice
-            self.delayed_fast_drop.target = self.player.fast_drop
-            self.delayed_soft_drop.target = self.player.move_down
-            self.delayed_move_left.target = self.player.move_left
-            self.delayed_move_right.target = self.player.move_right
-            self.delayed_rotate_left.target = self.player.rotate_right
-            self.delayed_rotate_right.target = self.player.rotate_left
+            self.remap_delayed_functions()
             # clear lines
             self.clear_lines()
+            # reset hold
+            self.can_swap_hold = True
 
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
@@ -476,6 +499,8 @@ class PyTetrisGame(GameScreen):
             self.delayed_rotate_right()
         else:
             self.delayed_rotate_right.reset()
+        if keys[K_SPACE]:
+            self.swap_hold()
 
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
