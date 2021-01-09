@@ -288,8 +288,9 @@ class PyTetrisGame(GameScreen):
     DAS_REPEAT_DELAY = 6 # 1 cell per 6 frames; speed after first iteration of holding button
     ARE_DELAY = 15 # time(frames) after a new peice is created where the peice cannot move
 
-    def __init__(self, screen: pygame.Surface, window_size: Point):
-        super().__init__(screen, window_size, 60)
+    def __init__(self, parent: GameScreen):
+        self.parent = parent
+        super().__init__(parent.screen, parent.window_size, 60)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.board_surface_size = Point(300, 600) # work in multiples of 10s and 20s or the bord gets wonky
@@ -539,7 +540,7 @@ class MainMenu(MenuScreen):
         # lucidaconsole, lucidasans, agencyfb, copperplategothic, dubairegualar
         # font = pygame.font.SysFont('lucidaconsole', 60)
         font = pygame.font.Font('assets/tetris-atari.ttf', 30)
-        game = PyTetrisGame(screen, window_size)
+        game = PyTetrisGame(self)
         self.buttons = [
             Button(game.run, 'Play', Rect(40, 190, 260, 100), font, border_size = 2),
             Button(lambda: print('Controls'), 'Controls', Rect(40, 300, 260, 100), font, border_size = 2),
