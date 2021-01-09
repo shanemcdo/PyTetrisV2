@@ -106,7 +106,7 @@ class Peice:
         for i, row in enumerate(self.matrix):
             for j, cell in enumerate(row):
                 if cell != Cell.EMPTY:
-                    result.blit(cells[cell.value], (j * cell_size.x, i * cell_size.y))
+                    result.blit(pygame.transform.scale(cells[cell.value], cell_size), (j * cell_size.x, i * cell_size.y))
         return result
 
     def draw(self, cells: [pygame.Surface], cell_size: Point, screen: pygame.Surface):
@@ -297,6 +297,8 @@ class PyTetrisGame(GameScreen):
         self.board_surface_pos = Point(self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1])
         self.hold_rect = Rect(self.board_surface_pos.x + self.board_surface_size.x + 15, self.board_surface_pos.y - 20, 120, 120)
         self.hold_surface = pygame.Surface(self.hold_rect.size)
+        self.hold_padding = Point(10, 10)
+        self.hold_cell_size = Point((self.hold_rect.w - self.hold_padding.x * 2) // 4, (self.hold_rect.h - self.hold_padding.y * 2) // 4)
         self.queue_rect = Rect(self.hold_rect.x + 5, self.hold_rect.y + self.hold_rect.h + 5, self.hold_rect.w - 10, 400)
         self.queue_surface = pygame.Surface(self.queue_rect.size)
         self.peices = [
@@ -427,7 +429,11 @@ class PyTetrisGame(GameScreen):
     def draw_hold(self):
         """Draw the the hold and it's contents"""
         self.hold_surface.fill((0, 0, 0))
-        self.screen.blit(self.hold_surface, self.hold_rect)
+        # self.player.matrix_size
+        if self.hold:
+            peice_surface = self.hold.get_surface(self.cells, self.hold_cell_size)
+            self.hold_surface.blit(peice_surface, (self.hold_padding.x + self.hold_cell_size.x * (4 - self.hold.matrix_size.x) // 2, self.hold_padding.y + self.hold_cell_size.y * (4 - self.hold.matrix_size.x) // 2))
+            self.screen.blit(self.hold_surface, self.hold_rect)
         pygame.draw.rect(self.screen, (100, 100, 100), self.hold_rect, 2)
 
     def draw_queue(self):

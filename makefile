@@ -5,9 +5,12 @@ all: $(target)
 $(target): pytetris.py *.py
 	pyinstaller $< -w -F
 
-release: all
-	cp -r assets dist
-	Explorer dist
+zip: all
+	cp $(target) .
+	tar -acf release.zip pytetris.exe assets
+	rm pytetris.exe
+	
+release: zip clean
 
 test: all
 	$(target)
