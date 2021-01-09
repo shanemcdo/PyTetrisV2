@@ -52,41 +52,16 @@ class TrueEvery:
         self.calls = override_start_value if override_start_value != None else self.start_value
         self.first_call = True
 
-class CallOnceEvery:
-    def __init__(self, count: int, target: callable, args: tuple = (), initial_count: int = None, once: bool = False):
+    def run_or_reset(self, boolean: bool) -> bool:
         """
-        :count: number of times this function must be called before repeating
-        :target: the callable object that will be called
-        :args: a tuple of args for the callable object
-        :initial_count: number of times this function must be called before repeating for the first time
+        :boolean: the boolean to be evaluated. If this boolean is True the {self.__call__} is called.
+            If the boolean is False it calls {self.reset}
+        :returns: a bool. It returns the result of call if {boolean} is True. or it returns False if {boolean} is False
         """
-        self.target = target
-        self.count = count
-        self.args = args
-        self.initial_count = initial_count if initial_count else count
-        self.once = once
-        self.calls = 1
-        self.first_call = True
-
-    def reset(self):
-        """Reset the count as well as the first_call variable making the next increment be of inital_count"""
-        self.calls = 1
-        self.first_call = True
-
-    def __call__(self, *args) -> (bool, any):
-        """
-        Overwrite () operator
-        :*args: args passed here override args in constructor. automatically placed into a tuple with *
-        :returns: a tuple of a boolean of if it ran or not, and the value target returns or None when it isn't run
-        """
-        if not self.first_call and self.once:
-            return False, None
-        self.calls -= 1
-        if self.calls <= 0:
-            self.calls = self.initial_count if self.first_call else self.count
-            self.first_call = False
-            return True, self.target(*(args if args else self.args))
-        return False, None
+        if boolean:
+            return self()
+        self.reset()
+        return False
 
 # TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough>
 #   maybe put everything in one bigger class PyTetris?
@@ -413,15 +388,6 @@ class PyTetrisGame(GameScreen):
                 lines += 1
         return lines
 
-    def remap_delayed_functions(self):
-        """"Update the new playerdata to the delayed functions that need them """
-        self.delayed_fast_drop.target = self.player.fast_drop
-        self.delayed_soft_drop.target = self.player.move_down
-        self.delayed_move_left.target = self.player.move_left
-        self.delayed_move_right.target = self.player.move_right
-        self.delayed_rotate_left.target = self.player.rotate_right
-        self.delayed_rotate_right.target = self.player.rotate_left
-
     def get_from_queue(self):
         self.queue.append(self.get_from_grab_bag())
         return self.queue.pop(0)
@@ -436,17 +402,15 @@ class PyTetrisGame(GameScreen):
         self.can_swap_hold = True
         self.hold = None
         self.delay_counters = {
-                'DAS_move_right': TrueEvery(self.LEVEL_FRAMES[self.level])
+                'soft_drop': TrueEvery(self.SOFT_DROP_DELAY),
+                'auto_drop': TrueEvery(self.LEVEL_FRAMES[self.level]),
+                'DAS_fast_drop': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
+                'DAS_move_left': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
+                'DAS_move_right': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
+                'DAS_rotate_left': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
+                'DAS_rotate_right': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 }
-        self.delayed_auto_drop = CallOnceEvery(self.LEVEL_FRAMES[self.level], self.auto_drop) # TODO: Update this on levelup
-        self.delayed_soft_drop = CallOnceEvery(self.SOFT_DROP_DELAY, self.player.move_down, (self.board,))
-        self.delayed_fast_drop = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.fast_drop, (self.board,), self.DAS_INITIAL_DELAY)
-        self.delayed_move_left = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.move_left, (self.board,), self.DAS_INITIAL_DELAY)
-        self.delayed_move_right = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.move_right, (self.board,), self.DAS_INITIAL_DELAY)
-        self.delayed_rotate_left = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.rotate_left, (self.board,), self.DAS_INITIAL_DELAY)
-        self.delayed_rotate_right = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.rotate_right, (self.board,), self.DAS_INITIAL_DELAY)
         self.player = self.get_from_queue()
-        self.remap_delayed_functions()
 
     def exit(self):
         self.reset()
@@ -495,7 +459,6 @@ class PyTetrisGame(GameScreen):
             self.hold = self.player
             self.player = temp
             self.player.reset()
-            self.remap_delayed_functions()
 
     def update(self):
         self.screen.fill((0, 0, 0))
@@ -504,49 +467,36 @@ class PyTetrisGame(GameScreen):
         # for i, s in enumerate([self.clock.get_time(), self.clock.get_fps(), self.delay_counters['soft_drop'], self.delay_counters['DAS']]):
         #     self.screen.blit(font.render(str(s), True, (255, 255, 255)), (0, i * 60))
         self.keyboard_input()
-        self.delayed_auto_drop()
+        self.auto_drop()
 
     def auto_drop(self):
         """Move the peice down one and lock if it cannot go farther down"""
-        if not self.player.move_down(self.board):
-            self.player.lock(self.board)
-            self.player = self.get_from_queue()
-            # update self.delayed_*_* objects to work with new peice
-            self.remap_delayed_functions()
-            # clear lines
-            self.clear_lines()
-            # reset hold
-            self.can_swap_hold = True
+        if self.delay_counters['auto_drop']():
+            if not self.player.move_down(self.board):
+                self.player.lock(self.board)
+                self.player = self.get_from_queue()
+                # clear lines
+                self.clear_lines()
+                # reset hold
+                self.can_swap_hold = True
 
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
         keys = pygame.key.get_pressed()
         if keys[K_ESCAPE]: self.exit()
-        if keys[K_s]:
-            self.delayed_soft_drop()
-        else:
-            self.delayed_soft_drop.reset()
-        if keys[K_a]:
-            self.delayed_move_left()
-        else:
-            self.delayed_move_left.reset()
-        if keys[K_d]:
-            self.delayed_move_right()
-        else:
-            self.delayed_move_right.reset()
-        if keys[K_w]:
-            if self.delayed_fast_drop()[0]:
-                self.auto_drop()
-        else:
-            self.delayed_fast_drop.reset()
-        if keys[K_q]:
-            self.delayed_rotate_left()
-        else:
-            self.delayed_rotate_left.reset()
-        if keys[K_e]:
-            self.delayed_rotate_right()
-        else:
-            self.delayed_rotate_right.reset()
+        if self.delay_counters['soft_drop'].run_or_reset(keys[K_s]):
+            self.player.move_down(self.board)
+        if self.delay_counters['DAS_fast_drop'].run_or_reset(keys[K_w]):
+            self.player.fast_drop(self.board)
+            self.auto_drop()
+        if self.delay_counters['DAS_move_left'].run_or_reset(keys[K_a]):
+            self.player.move_left(self.board)
+        if self.delay_counters['DAS_move_right'].run_or_reset(keys[K_d]):
+            self.player.move_right(self.board)
+        if self.delay_counters['DAS_rotate_left'].run_or_reset(keys[K_q]):
+            self.player.rotate_left(self.board)
+        if self.delay_counters['DAS_rotate_right'].run_or_reset(keys[K_e]):
+            self.player.rotate_right(self.board)
         if keys[K_SPACE]:
             self.swap_hold()
 
