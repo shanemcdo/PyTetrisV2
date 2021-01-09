@@ -44,7 +44,7 @@ class CallOnceEvery:
         """
         Overwrite () operator
         :*args: args passed here override args in constructor. automatically placed into a tuple with *
-        :returns: the value target returns or None when it isn't run
+        :returns: a tuple of a boolean of if it ran or not, and the value target returns or None when it isn't run
         """
         if not self.first_call and self.once:
             return False, None
@@ -426,7 +426,8 @@ class PyTetrisGame(GameScreen):
         else:
             self.delayed_move_right.reset()
         if keys[K_w]:
-            self.delayed_fast_drop()
+            if self.delayed_fast_drop()[0]:
+                self.auto_drop()
         else:
             self.delayed_fast_drop.reset()
         if keys[K_q]:
