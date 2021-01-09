@@ -491,7 +491,6 @@ class PyTetrisGame(GameScreen):
         self.draw_board()
         self.draw_hold()
         self.draw_queue()
-        font = pygame.font.SysFont('arial', 60)
         self.keyboard_input()
         self.auto_drop()
 
