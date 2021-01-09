@@ -6,7 +6,7 @@ from enum import Enum
 from copy import deepcopy
 from random import randrange
 from collections import namedtuple
-from game_screens import Point, Button, GameScreen, MenuScreen, clip_surface
+from pygame_tools import Point, Button, GameScreen, MenuScreen, clip_surface
 
 
 def new_matrix(width: int, height: int = None, value = None) -> [[]]:
