@@ -463,8 +463,6 @@ class PyTetrisGame(GameScreen):
         self.screen.fill((0, 0, 0))
         self.draw_board()
         font = pygame.font.SysFont('arial', 60)
-        # for i, s in enumerate([self.clock.get_time(), self.clock.get_fps(), self.delay_counters['soft_drop'], self.delay_counters['DAS']]):
-        #     self.screen.blit(font.render(str(s), True, (255, 255, 255)), (0, i * 60))
         self.keyboard_input()
         self.auto_drop()
 
