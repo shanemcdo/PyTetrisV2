@@ -279,18 +279,18 @@ class PyTetrisGame(GameScreen):
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         [Cell.Z, Cell.Z, Cell.EMPTY],
                         [Cell.EMPTY, Cell.Z, Cell.Z],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         [Cell.EMPTY, Cell.S, Cell.S],
                         [Cell.S, Cell.S, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
