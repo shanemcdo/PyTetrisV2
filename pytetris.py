@@ -354,16 +354,22 @@ class PyTetrisGame(GameScreen):
         if event.key == K_s:
             self.delay_counters['soft_drop'] -= 1
             if self.delay_counters['soft_drop'] < 1:
-                self.player.move_down(self.board)
                 self.delay_counters['soft_drop'] += self.LEVEL_FRAMES[self.level] // 2 # soft drop is half the speed of the current level
+                self.player.move_down(self.board)
         else:
             self.delay_counters['soft_drop'] = 0
-        if event.key == K_a:
-            self.player.move_left(self.board)
-        elif event.key == K_d:
-            self.player.move_right(self.board)
+        if event.key == K_a or event.key == K_d:
+            self.delay_counters['DAS'] -= 1
+            if self.delay_counters['soft_drop'] < 1:
+                self.das_inital = False
+                self.delay_counters['DAS'] += self.DAS_INITIAL_DELAY if self.das_inital else self.DAS_REPEAT_DELAY
+                if event.key == K_a:
+                    self.player.move_left(self.board)
+                else:
+                    self.player.move_right(self.board)
         else:
             self.delay_counters['DAS'] = 0
+            self.das_inital = True
         if event.key == K_w:
             self.player.lock(self.board)
         elif event.key == K_e:
