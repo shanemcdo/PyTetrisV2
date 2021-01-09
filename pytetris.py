@@ -469,16 +469,18 @@ class PyTetrisGame(GameScreen):
         self.keyboard_input()
         self.auto_drop()
 
+    def lock_and_get_new_peice(self):
+        """Lock {self.player} in place and get a new peice from the queue"""
+        self.player.lock(self.board)
+        self.player = self.get_from_queue()
+        self.clear_lines()
+        self.can_swap_hold = True
+
     def auto_drop(self):
         """Move the peice down one and lock if it cannot go farther down"""
         if self.delay_counters['auto_drop']():
             if not self.player.move_down(self.board):
-                self.player.lock(self.board)
-                self.player = self.get_from_queue()
-                # clear lines
-                self.clear_lines()
-                # reset hold
-                self.can_swap_hold = True
+                self.lock_and_get_new_peice()
 
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
@@ -488,7 +490,7 @@ class PyTetrisGame(GameScreen):
             self.player.move_down(self.board)
         if self.delay_counters['DAS_fast_drop'].run_or_reset(keys[K_w]):
             self.player.fast_drop(self.board)
-            self.auto_drop()
+            self.lock_and_get_new_peice()
         if self.delay_counters['DAS_move_left'].run_or_reset(keys[K_a]):
             self.player.move_left(self.board)
         if self.delay_counters['DAS_move_right'].run_or_reset(keys[K_d]):
