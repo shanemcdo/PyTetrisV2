@@ -16,7 +16,7 @@ def new_matrix(width: int, height: int = None, value = None) -> [[]]:
 class TrueEvery:
     """This is a functor that creates a function that returns true once every {self.count} calls"""
 
-    def __init__(self, Count: int, initial_count: int == None, once: bool = False, start_value: int = 0):
+    def __init__(self, count: int, initial_count: int = None, once: bool = False, start_value: int = 0):
         """
         :count: the number of times {self.__call__} must be called to return true once
         :initial_count: Optional. defaults to {self.count}. the number of times {self._call__} must be called to return True after the first call
@@ -25,6 +25,7 @@ class TrueEvery:
         """
         self.count = count
         self.initial_count = initial_count if initial_count != None else count
+        self.once = once
         self.calls = self.start_value = start_value
         self.first_call = True
 
@@ -40,7 +41,7 @@ class TrueEvery:
         self.calls -= 1
         if self.calls <= 0:
             self.calls = self.initial_count if self.first_call else self.count
-            first_call = False
+            self.first_call = False
             return True
 
     def reset(self, override_start_value: int = None):
@@ -434,6 +435,9 @@ class PyTetrisGame(GameScreen):
         self.level = 0
         self.can_swap_hold = True
         self.hold = None
+        self.delay_counters = {
+                'DAS_move_right': TrueEvery(self.LEVEL_FRAMES[self.level])
+                }
         self.delayed_auto_drop = CallOnceEvery(self.LEVEL_FRAMES[self.level], self.auto_drop) # TODO: Update this on levelup
         self.delayed_soft_drop = CallOnceEvery(self.SOFT_DROP_DELAY, self.player.move_down, (self.board,))
         self.delayed_fast_drop = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.fast_drop, (self.board,), self.DAS_INITIAL_DELAY)
