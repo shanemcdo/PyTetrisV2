@@ -301,6 +301,8 @@ class PyTetrisGame(GameScreen):
         self.hold_cell_size = Point((self.hold_rect.w - self.hold_padding.x * 2) // 4, (self.hold_rect.h - self.hold_padding.y * 2) // 4)
         self.queue_rect = Rect(self.hold_rect.x + 5, self.hold_rect.y + self.hold_rect.h + 5, self.hold_rect.w - 10, 400)
         self.queue_surface = pygame.Surface(self.queue_rect.size)
+        self.queue_padding = Point(10, 10)
+        self.queue_cell_size = Point((self.queue_rect.w - self.queue_padding.x * 2) // 4, (self.queue_rect.w - self.queue_padding.x * 2) // 4)
         self.peices = [
                 Peice(
                     [
@@ -439,6 +441,8 @@ class PyTetrisGame(GameScreen):
     def draw_queue(self):
         """Draw the the queue and it's contents"""
         self.queue_surface.fill((0, 0, 0))
+        for i, peice in enumerate(self.queue):
+            self.queue_surface.blit(peice.get_surface(self.cells, self.queue_cell_size), (self.queue_padding.x + self.queue_cell_size.x * (4 - peice.matrix_size.x) // 2, self.queue_padding.y + self.queue_cell_size.y * (4 - peice.matrix_size.y) // 2 + (4 * self.queue_cell_size.y + self.queue_padding.y) * i))
         self.screen.blit(self.queue_surface, self.queue_rect)
         pygame.draw.rect(self.screen, (100, 100, 100), self.queue_rect, 2)
 
