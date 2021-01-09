@@ -352,6 +352,7 @@ class PyTetrisGame(GameScreen):
                 ]
         self.num_of_peices = len(self.peices)
         self.cells = self.load_cells_from_image('assets/peices.png')
+        self.queue_size = 7 # arbitrary number
         # TODO: get actual shadow textures
         self.shadows = []
         for i in range(self.num_of_peices):
@@ -363,7 +364,7 @@ class PyTetrisGame(GameScreen):
     def clear_lines(self) -> int:
         """
         Clear the complete lines from the board
-        :returns: number of lines clered
+        :returns: number of lines cleared
         """
         lines = 0
         for i, row in enumerate(self.board):
@@ -386,9 +387,16 @@ class PyTetrisGame(GameScreen):
         self.delayed_rotate_left.target = self.player.rotate_right
         self.delayed_rotate_right.target = self.player.rotate_left
 
+    def get_from_queue(self):
+        self.queue.append(self.get_from_grab_bag())
+        return self.queue.pop(0)
+
     def reset(self):
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
-        self.player = self.get_from_grab_bag(True)
+        self.queue = []
+        for i in range(self.queue_size):
+            self.queue.append(self.get_from_grab_bag(i == 0))
+        self.player = self.get_from_grab_bag()
         self.level = 0
         self.can_swap_hold = True
         self.hold = None
@@ -399,6 +407,8 @@ class PyTetrisGame(GameScreen):
         self.delayed_move_right = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.move_right, (self.board,), self.DAS_INITIAL_DELAY)
         self.delayed_rotate_left = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.rotate_left, (self.board,), self.DAS_INITIAL_DELAY)
         self.delayed_rotate_right = CallOnceEvery(self.DAS_REPEAT_DELAY, self.player.rotate_right, (self.board,), self.DAS_INITIAL_DELAY)
+        self.player = self.get_from_queue()
+        self.remap_delayed_functions()
 
     def exit(self):
         self.reset()
@@ -442,7 +452,7 @@ class PyTetrisGame(GameScreen):
         if self.can_swap_hold:
             self.can_swap_hold = False
             if not self.hold:
-                self.hold = self.get_from_grab_bag()
+                self.hold = self.get_from_queue()
             temp = self.hold
             self.hold = self.player
             self.player = temp
@@ -462,7 +472,7 @@ class PyTetrisGame(GameScreen):
         """Move the peice down one and lock if it cannot go farther down"""
         if not self.player.move_down(self.board):
             self.player.lock(self.board)
-            self.player = self.get_from_grab_bag()
+            self.player = self.get_from_queue()
             # update self.delayed_*_* objects to work with new peice
             self.remap_delayed_functions()
             # clear lines
