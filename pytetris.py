@@ -13,6 +13,36 @@ def new_matrix(width: int, height: int = None, value = None) -> [[]]:
     """Create a 2d array with the passed width and height"""
     return [[value for j in range(width)] for i in range(height if height else width)]
 
+class TrueEvery:
+    """This is a functor that creates a function that returns true once every {self.count} calls"""
+
+    def __init__(self, Count: int, initial_count: int == None, once: bool = False, start_value: int = 0):
+        """
+        :count: the number of times {self.__call__} must be called to return true once
+        :initial_count: Optional. defaults to {self.count}. the number of times {self._call__} must be called to return True after the first call
+        :once: Optional. defaults to False. the value
+        :start_value: Optional. defaults to 0. the value that the offset starts at before the current call
+        """
+        self.count = count
+        self.initial_count = initial_count if initial_count != None else count
+        self.calls = self.start_value = start_value
+        self.first_call = True
+
+    def __call__(self) -> bool:
+        """
+        Override () operator
+        :returns: true once every {self.count} calls
+            always returns true first time run unless start_value is set to something different
+        """
+        # TODO: refactor this
+        if not self.first_call and self.once:
+            return False
+        self.calls -= 1
+        if self.calls <= 0:
+            self.calls = self.initial_count if self.first_call else self.count
+            first_call = False
+            return True
+
 class CallOnceEvery:
     def __init__(self, count: int, target: callable, args: tuple = (), initial_count: int = None, once: bool = False):
         """
