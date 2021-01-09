@@ -290,11 +290,11 @@ class PyTetrisGame(GameScreen):
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
-        self.cell_size = Point(30, 30)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
-        self.board_surface_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
+        self.board_surface_size = Point(300, 600)
         self.board_surface = pygame.Surface(self.board_surface_size, flags = SRCALPHA)
+        self.cell_size = Point(self.board_surface_size.x // self.board_size.x, self.board_surface_size.y // self.board_size.y)
         board_center = self.board_surface.get_rect().center
         self.board_surface_pos = Point(self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1])
         self.hold_rect = Rect(self.board_surface_pos.x + self.board_surface_size.x + 15, self.board_surface_pos.y - 20, 120, 120)
