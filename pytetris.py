@@ -8,6 +8,7 @@ from random import randrange
 from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
 
+
 def new_matrix(width: int, height: int = None, value = None) -> [[]]:
     """Create a 2d array with the passed width and height"""
     return [[value for j in range(width)] for i in range(height if height else width)]
@@ -17,6 +18,39 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     cropped = pygame.Surface(rect.size)
     cropped.blit(surface, (0, 0), rect)
     return cropped
+
+class CallOnceEvery:
+    def __init__(self, count: int, target: callable, args: tuple = (), initial_count: int = None):
+        """
+        :count: number of times this function must be called before repeating
+        :target: the callable object that will be called
+        :args: a tuple of args for the callable object
+        :initial_count: number of times this function must be called before repeating for the first time
+        """
+        self.target = target
+        self.count = count
+        self.args = args
+        self.initial_count = initial_count if initial_count else count
+        self.calls = 1
+        self.first_call = True
+
+    def reset(self):
+        """Reset the count as well as the first_call variable making the next increment be of inital_count"""
+        self.calls = 1
+        self.first_call = True
+
+    def __call__(self, *args) -> None:
+        """
+        Overwrite () operator
+        :*args: args passed here override args in constructor. automatically placed into a tuple with *
+        :returns: the value target returns or None when it isn't run
+        """
+        self.calls -= 1
+        if self.calls <= 0:
+            self.calls = self.initial_count if self.first_call else self.count
+            self.first_call = False
+            return self.target(*(args if args else self.args))
+        return None
 
 # TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough>
 #   maybe put everything in one bigger class PyTetris?
