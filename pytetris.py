@@ -20,7 +20,7 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     return cropped
 
 class CallOnceEvery:
-    def __init__(self, count: int, target: callable, args: tuple = (), initial_count: int = None):
+    def __init__(self, count: int, target: callable, args: tuple = (), initial_count: int = None, once: bool = False):
         """
         :count: number of times this function must be called before repeating
         :target: the callable object that will be called
@@ -31,6 +31,7 @@ class CallOnceEvery:
         self.count = count
         self.args = args
         self.initial_count = initial_count if initial_count else count
+        self.once = once
         self.calls = 1
         self.first_call = True
 
@@ -39,18 +40,20 @@ class CallOnceEvery:
         self.calls = 1
         self.first_call = True
 
-    def __call__(self, *args) -> None:
+    def __call__(self, *args) -> (bool, any):
         """
         Overwrite () operator
         :*args: args passed here override args in constructor. automatically placed into a tuple with *
         :returns: the value target returns or None when it isn't run
         """
+        if not self.first_call and self.once:
+            return False, None
         self.calls -= 1
         if self.calls <= 0:
             self.calls = self.initial_count if self.first_call else self.count
             self.first_call = False
-            return self.target(*(args if args else self.args))
-        return None
+            return True, self.target(*(args if args else self.args))
+        return False, None
 
 # TODO: Deal with cell_size being needed everwhere <08-01-21, Shane McDonough>
 #   maybe put everything in one bigger class PyTetris?
