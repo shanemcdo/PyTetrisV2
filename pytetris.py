@@ -302,6 +302,7 @@ class PyTetrisGame(GameScreen):
         self.reset()
 
     def reset(self):
+        self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.player = self.get_from_grab_bag(True)
         self.level = 0
         self.das_inital = True
