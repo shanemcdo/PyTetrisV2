@@ -339,6 +339,24 @@ class PyTetrisGame(GameScreen):
         self.cells = self.load_cells_from_image('assets/peices.png')
         self.reset()
 
+    def clear_lines(self) -> int:
+        """
+        Clear the complete lines from the board
+        :returns: number of lines clered
+        """
+        lines = 0
+        for i, row in enumerate(self.board):
+            for cell in row:
+                if cell == Cell.EMPTY:
+                    break
+            else:
+                # create clearing lines animations
+                self.board.pop(i)
+                self.board.insert(0, [Cell.EMPTY for _ in range(self.board_size.x)])
+                lines += 1
+        return lines
+
+
     def reset(self):
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.player = self.get_from_grab_bag(True)
@@ -408,6 +426,8 @@ class PyTetrisGame(GameScreen):
             self.delayed_move_right.target = self.player.move_right
             self.delayed_rotate_left.target = self.player.rotate_right
             self.delayed_rotate_right.target = self.player.rotate_left
+            # clear lines
+            self.clear_lines()
 
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
