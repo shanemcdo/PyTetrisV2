@@ -3,6 +3,7 @@
 import pygame, sys
 from pygame.locals import *
 from enum import Enum
+from copy import deepcopy
 from random import randrange
 from collections import namedtuple
 from game_screens import Point, Button, GameScreen, MenuScreen
@@ -323,7 +324,8 @@ class PyTetrisGame(GameScreen):
 
     def get_from_grab_bag(self, new_bag: bool = False):
         if new_bag or not hasattr(self, 'grab_bag') or not self.grab_bag:
-            self.grab_bag = self.peices.copy()
+            self.grab_bag = deepcopy(self.peices)
+        print([i.get_cell_type() for i in self.grab_bag])
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
     def draw_board(self):
