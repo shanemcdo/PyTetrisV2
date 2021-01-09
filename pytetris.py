@@ -65,16 +65,15 @@ class Peice:
 
     def move_down(self, board: [[Cell]]) -> bool:
         """Move the tetris peice down"""
-        if not self.move_to(board, Point(self.pos.x, self.pos.y + 1)):
-            self.lock(board)
+        return self.move_to(board, Point(self.pos.x, self.pos.y + 1))
 
     def move_left(self, board: [[Cell]]) -> bool:
         """Move the tetris peice left"""
-        self.move_to(board, Point(self.pos.x - 1, self.pos.y))
+        return self.move_to(board, Point(self.pos.x - 1, self.pos.y))
 
     def move_right(self, board: [[Cell]]) -> bool:
         """Move the tetris peice right"""
-        self.move_to(board, Point(self.pos.x + 1, self.pos.y))
+        return self.move_to(board, Point(self.pos.x + 1, self.pos.y))
 
     def move_to(self, board: [[Cell]], pos: Point) -> bool:
         """Try to move to a new position"""
@@ -216,13 +215,13 @@ class PyTetrisGame(GameScreen):
             27: 200,
             28: 200,
             }
+    SOFT_DROP_DELAY = 2 # 1 cell per 2 frames
     DAS_INITIAL_DELAY = 16 # 1 cell per 16 frames; inital speed when holding button
     DAS_REPEAT_DELAY = 6 # 1 cell per 6 frames; speed after first iteration of holding button
     ARE_DELAY = 15 # time(frames) after a new peice is created where the peice cannot move
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
         super().__init__(screen, window_size, 60)
-        pygame.key.set_repeat(1)
         self.cell_size = Point(30, 30)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
@@ -268,10 +267,10 @@ class PyTetrisGame(GameScreen):
                     ),
                 Peice(
                     [
-                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
-                        [Cell.EMPTY, Cell.I, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.I, Cell.I, Cell.I, Cell.I],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
+                        [Cell.EMPTY, Cell.EMPTY, Cell.EMPTY, Cell.EMPTY],
                         ],
                     self.board_size,
                     self.window_size
@@ -302,7 +301,9 @@ class PyTetrisGame(GameScreen):
     def reset(self):
         self.player = self.get_from_grab_bag(True)
         self.level = 0
+        self.das_inital = True
         self.delay_counters = {
+                'auto_drop': 0,
                 'soft_drop': 0,
                 'DAS': 0,
                 'ARE': 0,
@@ -347,36 +348,52 @@ class PyTetrisGame(GameScreen):
     def update(self):
         self.screen.fill((0, 0, 0))
         self.draw_board()
+        font = pygame.font.SysFont('arial', 60)
+        # for i, s in enumerate([self.clock.get_time(), self.clock.get_fps(), self.delay_counters['soft_drop'], self.delay_counters['DAS']]):
+        #     self.screen.blit(font.render(str(s), True, (255, 255, 255)), (0, i * 60))
+        self.keyboard_input()
+        self.auto_drop()
 
-    def key_down(self, event: pygame.event.Event):
-        if event.key == K_ESCAPE:
+    def auto_drop(self):
+        """Move the peice down one and lock if it cannot go farther down"""
+        self.delay_counters['auto_drop'] -= 1
+        if self.delay_counters['auto_drop'] < 1:
+            self.delay_counters['auto_drop'] += self.LEVEL_FRAMES[self.level]
+            if not self.player.move_down(self.board):
+                self.player.lock(self.board)
+                self.player = self.get_from_grab_bag()
+
+    def keyboard_input(self):
+        """Use pygame.key.get_pressed for input instead of keyboard events"""
+        keys = pygame.key.get_pressed()
+        if keys[K_ESCAPE]:
             self.exit()
-        if event.key == K_s:
+        if keys[K_s]:
             self.delay_counters['soft_drop'] -= 1
             if self.delay_counters['soft_drop'] < 1:
-                self.delay_counters['soft_drop'] += self.LEVEL_FRAMES[self.level] // 2 # soft drop is half the speed of the current level
+                self.delay_counters['soft_drop'] += self.SOFT_DROP_DELAY
                 self.player.move_down(self.board)
         else:
             self.delay_counters['soft_drop'] = 0
-        if event.key == K_a or event.key == K_d:
+        if keys[K_a] or keys[K_d]:
             self.delay_counters['DAS'] -= 1
-            if self.delay_counters['soft_drop'] < 1:
-                self.das_inital = False
+            if self.delay_counters['DAS'] < 1:
                 self.delay_counters['DAS'] += self.DAS_INITIAL_DELAY if self.das_inital else self.DAS_REPEAT_DELAY
-                if event.key == K_a:
+                self.das_inital = False
+                if keys[K_a]:
                     self.player.move_left(self.board)
                 else:
                     self.player.move_right(self.board)
         else:
             self.delay_counters['DAS'] = 0
             self.das_inital = True
-        if event.key == K_w:
+        if keys[K_w]:
             self.player.lock(self.board)
-        elif event.key == K_e:
+        elif keys[K_e]:
             self.player.rotate_right(self.board)
-        elif event.key == K_q:
+        elif keys[K_q]:
             self.player.rotate_left(self.board)
-        elif event.key == K_r:
+        elif keys[K_r]:
             self.player = self.get_from_grab_bag()
 
 class MainMenu(MenuScreen):
