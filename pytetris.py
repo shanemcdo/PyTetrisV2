@@ -115,7 +115,9 @@ class Peice:
 
     def draw_shadow(self, shadows: [pygame.Surface], cell_size: Point, screen: pygame.Surface, board: [[Cell]]):
         shadow_pos = self.get_fast_drop_pos(board)
-        screen.blit(self.get_surface(shadows, cell_size), (cell_size.x * shadow_pos.x, cell_size.y * shadow_pos.y))
+        shadow_surface = self.get_surface(shadows, cell_size)
+        shadow_surface.set_alpha(50)
+        screen.blit(shadow_surface, (cell_size.x * shadow_pos.x, cell_size.y * shadow_pos.y))
 
     def fast_drop(self, board: [[Cell]]):
         while self.move_down(board): pass
@@ -292,7 +294,7 @@ class PyTetrisGame(GameScreen):
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.board_surface_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
-        self.board_surface = pygame.Surface(self.board_surface_size)
+        self.board_surface = pygame.Surface(self.board_surface_size, flags = SRCALPHA)
         board_center = self.board_surface.get_rect().center
         self.board_surface_pos = Point(self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1])
         self.hold_rect = Rect(self.board_surface_pos.x + self.board_surface_size.x + 15, self.board_surface_pos.y - 20, 120, 120)
@@ -371,12 +373,6 @@ class PyTetrisGame(GameScreen):
         self.num_of_peices = len(self.peices)
         self.cells = self.load_cells_from_image('assets/peices.png')
         self.queue_size = 7 # arbitrary number
-        # TODO: get actual shadow textures
-        self.shadows = []
-        for i in range(self.num_of_peices):
-            cell = pygame.Surface.copy(self.cells[i])
-            cell.set_alpha(50)
-            self.shadows.append(cell)
         self.reset()
 
     def clear_lines(self) -> int:
@@ -461,7 +457,7 @@ class PyTetrisGame(GameScreen):
                 if cell != Cell.EMPTY:
                     self.board_surface.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
         # draw the player on the board
-        self.player.draw_shadow(self.shadows, self.cell_size, self.board_surface, self.board)
+        self.player.draw_shadow(self.cells, self.cell_size, self.board_surface, self.board)
         self.player.draw(self.cells, self.cell_size, self.board_surface)
         # draw board to the screen
         self.screen.blit(self.board_surface, self.board_surface_pos)
