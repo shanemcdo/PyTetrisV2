@@ -6,6 +6,12 @@ from collections import namedtuple
 
 Point = namedtuple('Point', ['x', 'y'])
 
+def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
+    """Copy part of a pygame.Surface"""
+    cropped = pygame.Surface(rect.size)
+    cropped.blit(surface, (0, 0), rect)
+    return cropped
+
 class Button:
     """A button in a pygame application"""
 

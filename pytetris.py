@@ -6,18 +6,12 @@ from enum import Enum
 from copy import deepcopy
 from random import randrange
 from collections import namedtuple
-from game_screens import Point, Button, GameScreen, MenuScreen
+from game_screens import Point, Button, GameScreen, MenuScreen, clip_surface
 
 
 def new_matrix(width: int, height: int = None, value = None) -> [[]]:
     """Create a 2d array with the passed width and height"""
     return [[value for j in range(width)] for i in range(height if height else width)]
-
-def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
-    """Copy part of a pygame.Surface"""
-    cropped = pygame.Surface(rect.size)
-    cropped.blit(surface, (0, 0), rect)
-    return cropped
 
 class CallOnceEvery:
     def __init__(self, count: int, target: callable, args: tuple = (), initial_count: int = None, once: bool = False):
