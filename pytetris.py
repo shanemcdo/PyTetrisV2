@@ -303,6 +303,11 @@ class PyTetrisGame(GameScreen):
     def reset(self):
         self.player = self.get_from_grab_bag(True)
         self.level = 0
+        delay_counters = {
+                'soft_drop': 0,
+                'DAS': 0,
+                'ARE': 0,
+                }
 
     def exit(self):
         self.reset()
