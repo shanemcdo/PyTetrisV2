@@ -294,7 +294,11 @@ class PyTetrisGame(GameScreen):
         self.board_surface_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
         self.board_surface = pygame.Surface(self.board_surface_size)
         board_center = self.board_surface.get_rect().center
-        self.board_surface_pos = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
+        self.board_surface_pos = Point(self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1])
+        self.hold_rect = Rect(self.board_surface_pos.x + self.board_surface_size.x + 15, self.board_surface_pos.y - 20, 120, 120)
+        self.hold_surface = pygame.Surface(self.hold_rect.size)
+        self.queue_rect = Rect(self.hold_rect.x + 5, self.hold_rect.y + self.hold_rect.h + 5, self.hold_rect.w - 10, 400)
+        self.queue_surface = pygame.Surface(self.queue_rect.size)
         self.peices = [
                 Peice(
                     [
@@ -420,7 +424,20 @@ class PyTetrisGame(GameScreen):
             self.grab_bag = deepcopy(self.peices)
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
+    def draw_hold(self):
+        """Draw the the hold and it's contents"""
+        self.hold_surface.fill((0, 0, 0))
+        self.screen.blit(self.hold_surface, self.hold_rect)
+        pygame.draw.rect(self.screen, (100, 100, 100), self.hold_rect, 2)
+
+    def draw_queue(self):
+        """Draw the the queue and it's contents"""
+        self.queue_surface.fill((0, 0, 0))
+        self.screen.blit(self.queue_surface, self.queue_rect)
+        pygame.draw.rect(self.screen, (100, 100, 100), self.queue_rect, 2)
+
     def draw_board(self):
+        """Draw the the board and it's contents"""
         # make board a black screen
         self.board_surface.fill((0, 0, 0))
         # draw board lines
@@ -462,6 +479,8 @@ class PyTetrisGame(GameScreen):
     def update(self):
         self.screen.fill((0, 0, 0))
         self.draw_board()
+        self.draw_hold()
+        self.draw_queue()
         font = pygame.font.SysFont('arial', 60)
         self.keyboard_input()
         self.auto_drop()
