@@ -216,7 +216,6 @@ class PyTetrisGame(GameScreen):
             27: 200,
             28: 200,
             }
-    SOFT_DROP_SPEED = 2 # 1 cell per 2 frames; speed of fall
     DAS_INITIAL_DELAY = 16 # 1 cell per 16 frames; inital speed when holding button
     DAS_REPEAT_DELAY = 6 # 1 cell per 6 frames; speed after first iteration of holding button
     ARE_DELAY = 15 # time(frames) after a new peice is created where the peice cannot move
@@ -303,7 +302,7 @@ class PyTetrisGame(GameScreen):
     def reset(self):
         self.player = self.get_from_grab_bag(True)
         self.level = 0
-        delay_counters = {
+        self.delay_counters = {
                 'soft_drop': 0,
                 'DAS': 0,
                 'ARE': 0,
@@ -352,13 +351,20 @@ class PyTetrisGame(GameScreen):
     def key_down(self, event: pygame.event.Event):
         if event.key == K_ESCAPE:
             self.exit()
-        elif event.key == K_s:
-            self.player.move_down(self.board)
-        elif event.key == K_a:
+        if event.key == K_s:
+            self.delay_counters['soft_drop'] -= 1
+            if self.delay_counters['soft_drop'] < 1:
+                self.player.move_down(self.board)
+                self.delay_counters['soft_drop'] += self.LEVEL_FRAMES[self.level] // 2 # soft drop is half the speed of the current level
+        else:
+            self.delay_counters['soft_drop'] = 0
+        if event.key == K_a:
             self.player.move_left(self.board)
         elif event.key == K_d:
             self.player.move_right(self.board)
-        elif event.key == K_w:
+        else:
+            self.delay_counters['DAS'] = 0
+        if event.key == K_w:
             self.player.lock(self.board)
         elif event.key == K_e:
             self.player.rotate_right(self.board)
