@@ -63,6 +63,9 @@ class Peice:
         """Draw the peice onto the board"""
         screen.blit(self.get_surface(cells, cell_size), (cell_size.x * self.pos.x, cell_size.y * self.pos.y))
 
+    def fast_drop(self, board: [[Cell]]):
+        while self.move_down(board): pass
+
     def move_down(self, board: [[Cell]]) -> bool:
         """Move the tetris peice down"""
         return self.move_to(board, Point(self.pos.x, self.pos.y + 1))
@@ -303,9 +306,11 @@ class PyTetrisGame(GameScreen):
         self.level = 0
         self.das_inital = True
         self.delay_counters = {
+                'fast_drop': 0,
                 'auto_drop': 0,
                 'soft_drop': 0,
                 'DAS': 0,
+                'DAS_rotate': 0,
                 'ARE': 0,
                 }
 
@@ -388,13 +393,24 @@ class PyTetrisGame(GameScreen):
             self.delay_counters['DAS'] = 0
             self.das_inital = True
         if keys[K_w]:
-            self.player.lock(self.board)
-        elif keys[K_e]:
-            self.player.rotate_right(self.board)
-        elif keys[K_q]:
-            self.player.rotate_left(self.board)
-        elif keys[K_r]:
-            self.player = self.get_from_grab_bag()
+            self.delay_counters['fast_drop'] -= 1
+            if self.delay_counters['fast_drop']:
+                self.player.fast_drop(self.board)
+                self.delay_counters['fast_drop'] += self.DAS_INITIAL_DELAY
+        else:
+            self.delay_counters['fast_drop'] = 0
+        if keys[K_e] or keys[K_q]:
+            self.delay_counters['DAS_repeat'] -= 1
+            if self.delay_counters['DAS_repeat'] < 1:
+                self.delay_counters['DAS_repeat'] += self.DAS_INITIAL_DELAY if self.das_inital else self.DAS_REPEAT_DELAY
+                self.das_inital = False
+                if keys[K_e]:
+                    self.player.rotate_right(self.board)
+                else:
+                    self.player.rotate_left(self.board)
+        else:
+            self.delay_counters['DAS_repeat'] = 0
+            self.das_inital = True
 
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
