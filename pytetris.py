@@ -425,9 +425,9 @@ class PyTetrisGame(GameScreen):
         self.board_surface.fill((0, 0, 0))
         # draw board lines
         for i in range(1, self.board_size.x):
-            pygame.draw.line(self.board_surface, (100, 100, 100), (i * self.cell_size.x, 0), (i * self.cell_size.x, self.board_surface_size.y))
+            pygame.draw.line(self.board_surface, (100, 100, 100), (i * self.cell_size.x - 1, 0), (i * self.cell_size.x - 1, self.board_surface_size.y), 2)
         for i in range(1, self.board_size.y):
-            pygame.draw.line(self.board_surface, (100, 100, 100), (0, i * self.cell_size.y), (self.board_surface_size.y, i * self.cell_size.x))
+            pygame.draw.line(self.board_surface, (100, 100, 100), (0, i * self.cell_size.y - 1), (self.board_surface_size.y, i * self.cell_size.y - 1), 2)
         # draw the contents of the board
         for i, row in enumerate(self.board):
             for j, cell in enumerate(row):
@@ -439,7 +439,7 @@ class PyTetrisGame(GameScreen):
         # draw board to the screen
         self.screen.blit(self.board_surface, self.board_surface_pos)
         # draw border around board
-        pygame.draw.rect(self.screen, (100, 100, 100), (self.board_surface_pos, self.board_surface_size), 1)
+        pygame.draw.rect(self.screen, (100, 100, 100), (self.board_surface_pos, self.board_surface_size), 2)
 
     def load_cells_from_image(self, file_name: str) -> [pygame.Surface]:
         """Split an image into 7 surfaces to be used as tiles"""
