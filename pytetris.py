@@ -101,8 +101,19 @@ class Peice:
         """Draw the peice onto the board"""
         screen.blit(self.get_surface(cells, cell_size), (cell_size.x * self.pos.x, cell_size.y * self.pos.y))
 
+    def draw_shadow(self, shadows: [pygame.Surface], cell_size: Point, screen: pygame.Surface, board: [[Cell]]):
+        shadow_pos = self.get_fast_drop_pos(board)
+        screen.blit(self.get_surface(shadows, cell_size), (cell_size.x * shadow_pos.x, cell_size.y * shadow_pos.y))
+
     def fast_drop(self, board: [[Cell]]):
         while self.move_down(board): pass
+
+    def get_fast_drop_pos(self, board: [[Cell]]) -> Point:
+        point = deepcopy(self.pos)
+        while self.check_valid_position(board, point):
+            point = Point(point.x, point.y + 1)
+        point = Point(point.x, point.y - 1)
+        return point
 
     def move_down(self, board: [[Cell]]) -> bool:
         """Move the tetris peice down"""
@@ -337,6 +348,12 @@ class PyTetrisGame(GameScreen):
                 ]
         self.num_of_peices = len(self.peices)
         self.cells = self.load_cells_from_image('assets/peices.png')
+        # get actual shadow textures
+        self.shadows = []
+        for _ in range(self.num_of_peices):
+            surface = pygame.Surface(self.cell_size)
+            surface.fill((50, 50, 50))
+            self.shadows.append(surface)
         self.reset()
 
     def clear_lines(self) -> int:
@@ -393,6 +410,7 @@ class PyTetrisGame(GameScreen):
                     self.board_surface.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
         # draw the player on the board
         self.player.draw(self.cells, self.cell_size, self.board_surface)
+        self.player.draw_shadow(self.shadows, self.cell_size, self.board_surface, self.board)
         # draw board to the screen
         self.screen.blit(self.board_surface, self.board_surface_pos)
         # draw border around board
