@@ -509,6 +509,7 @@ class PyTetrisGame(GameScreen):
         if keys[K_ESCAPE]: self.exit()
         if self.delay_counters['soft_drop'].run_or_reset(keys[K_s]):
             self.player.move_down(self.board)
+            self.delay_counters['auto_drop'].reset()
         if self.delay_counters['DAS_fast_drop'].run_or_reset(keys[K_w]):
             self.player.fast_drop(self.board)
             self.lock_and_get_new_peice()
