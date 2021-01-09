@@ -226,6 +226,10 @@ class PyTetrisGame(GameScreen):
         self.cell_size = Point(30, 30)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
+        self.board_surface_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
+        self.board_surface = pygame.Surface(self.board_surface_size)
+        board_center = self.board_surface.get_rect().center
+        self.board_surface_pos = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
         self.peices = [
                 Peice(
                     [
@@ -309,22 +313,18 @@ class PyTetrisGame(GameScreen):
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
     def draw_board(self):
-        board_screen_size = Point(self.cell_size.x * self.board_size.x,  self.cell_size.y * self.board_size.y)
-        board_screen = pygame.Surface(board_screen_size)
-        board_screen.fill((0, 0, 0))
+        self.board_surface.fill((0, 0, 0))
         for i in range(1, self.board_size.x):
-            pygame.draw.line(board_screen, (100, 100, 100), (i * self.cell_size.x, 0), (i * self.cell_size.x, board_screen_size.y))
+            pygame.draw.line(self.board_surface, (100, 100, 100), (i * self.cell_size.x, 0), (i * self.cell_size.x, self.board_surface_size.y))
         for i in range(1, self.board_size.y):
-            pygame.draw.line(board_screen, (100, 100, 100), (0, i * self.cell_size.y), (board_screen_size.y, i * self.cell_size.x))
+            pygame.draw.line(self.board_surface, (100, 100, 100), (0, i * self.cell_size.y), (self.board_surface_size.y, i * self.cell_size.x))
         for i, row in enumerate(self.board):
             for j, cell in enumerate(row):
                 if cell != Cell.EMPTY:
-                    board_screen.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
-        board_center = board_screen.get_rect().center
-        self.player.draw(self.cells, self.cell_size, board_screen)
-        center = self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1]
-        self.screen.blit(board_screen, center)
-        pygame.draw.rect(self.screen, (100, 100, 100), (center, board_screen.get_size()), 1)
+                    self.board_surface.blit(self.cells[cell.value], (j * self.cell_size.x, i * self.cell_size.y))
+        self.player.draw(self.cells, self.cell_size, self.board_surface)
+        self.screen.blit(self.board_surface, self.board_surface_pos)
+        pygame.draw.rect(self.screen, (100, 100, 100), (self.board_surface_pos, self.board_surface_size), 1)
 
     def load_cells_from_image(self, file_name: str) -> [pygame.Surface]:
         """Split an image into 7 surfaces to be used as tiles"""
