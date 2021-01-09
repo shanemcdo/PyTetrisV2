@@ -348,12 +348,12 @@ class PyTetrisGame(GameScreen):
                 ]
         self.num_of_peices = len(self.peices)
         self.cells = self.load_cells_from_image('assets/peices.png')
-        # get actual shadow textures
+        # TODO: get actual shadow textures
         self.shadows = []
-        for _ in range(self.num_of_peices):
-            surface = pygame.Surface(self.cell_size)
-            surface.fill((50, 50, 50))
-            self.shadows.append(surface)
+        for i in range(self.num_of_peices):
+            cell = pygame.Surface.copy(self.cells[i])
+            cell.set_alpha(50)
+            self.shadows.append(cell)
         self.reset()
 
     def clear_lines(self) -> int:
