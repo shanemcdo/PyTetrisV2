@@ -67,6 +67,13 @@ class GameScreen:
         self.running = False
         self.rect = self.screen.get_rect()
         self.clock = pygame.time.Clock()
+        self.game_ticks = 0
+
+    def tick(self):
+        self.clock.tick(self.frame_rate)
+        self.game_ticks += 1
+        if self.game_ticks > 999999999999999999999:
+            self.game_ticks = 0
 
     def key_down(self, event: pygame.event.Event):
         """Function called when a pygame KEYDOWN event is triggered"""
@@ -105,7 +112,7 @@ class GameScreen:
                 self.handle_event(event)
             self.update()
             pygame.display.update()
-            self.clock.tick(self.frame_rate)
+            self.tick()
 
 class MenuScreen(GameScreen):
     """
