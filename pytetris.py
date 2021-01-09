@@ -397,7 +397,7 @@ class PyTetrisGame(GameScreen):
         self.queue = []
         for i in range(self.queue_size):
             self.queue.append(self.get_from_grab_bag(i == 0))
-        self.player = self.get_from_grab_bag()
+        self.player = self.get_from_queue()
         self.level = 0
         self.can_swap_hold = True
         self.hold = None
@@ -410,7 +410,6 @@ class PyTetrisGame(GameScreen):
                 'DAS_rotate_left': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 'DAS_rotate_right': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 }
-        self.player = self.get_from_queue()
 
     def exit(self):
         self.reset()
