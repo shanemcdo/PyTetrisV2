@@ -425,6 +425,7 @@ class PyTetrisGame(GameScreen):
         self.cells = self.load_cells_from_image('assets/peices.png')
         self.queue_size = 7 # arbitrary number
         self.reset()
+        self.pause_menu = PauseMenu(self)
 
     def clear_lines(self) -> int:
         """
@@ -453,6 +454,7 @@ class PyTetrisGame(GameScreen):
         self.can_swap_hold = True
         self.hold = None
         self.ARE_locked = False
+        self.paused = False
         self.lines_cleared = 0
         self.lines_cleared_since_level_up = 0
         self.delay_counters = {
@@ -593,7 +595,8 @@ class PyTetrisGame(GameScreen):
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
         keys = pygame.key.get_pressed()
-        if keys[K_ESCAPE]: self.exit()
+        if keys[K_ESCAPE] or keys[K_p]:
+            self.pause_menu.run()
         if not self.ARE_locked:
             if self.delay_counters['soft_drop'].run_or_reset(keys[K_s]):
                 self.player.move_down(self.board)
@@ -630,6 +633,7 @@ class OptionsMenu(MenuScreen):
 
 class ControlsMenu(MenuScreen):
     # TODO: Add ability for user to remap controls
+    # TODO: Finish this
 
     def __init__(self, parent: GameScreen):
         super().__init__(parent.screen, parent.window_size)
@@ -646,6 +650,31 @@ class ControlsMenu(MenuScreen):
 
     def back(self):
         self.running = False
+
+class PauseMenu(MenuScreen):
+    # TODO: Finish this
+
+    def __init__(self, parent: GameScreen):
+        super().__init__(parent.screen, parent.window_size)
+        self.parent = parent
+        self.font_path = parent.font_path
+        back_button_font = pygame.font.Font(self.font_path, 15)
+        self.buttons = [
+                Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font)
+                ]
+
+    def update(self):
+        super().update()
+
+    def key_down(self, event: pygame.event.Event):
+        print(event.key, K_p, K_ESCAPE)
+        if event.key == K_p or event.key == K_ESCAPE:
+            self.running = False
+
+    def back(self):
+        self.running = False
+        self.parent.exit()
+
 
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
