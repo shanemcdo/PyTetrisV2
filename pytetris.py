@@ -329,8 +329,9 @@ class PyTetrisGame(GameScreen):
     ARE_DELAY = 15 # time(frames) after a new peice is created where the peice cannot move
 
     def __init__(self, parent: GameScreen):
-        self.parent = parent
         super().__init__(parent.screen, parent.window_size, frame_rate = 60)
+        self.parent = parent
+        self.font_path = self.parent.font_path
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.board_surface_size = Point(300, 600) # work in multiples of 10s and 20s or the bord gets wonky
@@ -338,10 +339,13 @@ class PyTetrisGame(GameScreen):
         self.cell_size = Point(self.board_surface_size.x // self.board_size.x, self.board_surface_size.y // self.board_size.y)
         board_center = self.board_surface.get_rect().center
         self.board_surface_pos = Point(self.rect.center[0] - board_center[0], self.rect.center[1] - board_center[1])
-        self.hold_rect = Rect(self.board_surface_pos.x + self.board_surface_size.x + 15, self.board_surface_pos.y - 20, 120, 120)
+        self.hold_rect = Rect(self.board_surface_pos.x + self.board_surface_size.x + 15, 50, 120, 120)
         self.hold_surface = pygame.Surface(self.hold_rect.size)
         self.hold_padding = Point(10, 10)
         self.hold_cell_size = Point((self.hold_rect.w - self.hold_padding.x * 2) // 4, (self.hold_rect.h - self.hold_padding.y * 2) // 4)
+        self.hold_text = pygame.font.Font(self.font_path, 30).render('Hold', True, (255, 255, 255))
+        self.hold_text_rect = self.hold_text.get_rect()
+        self.hold_text_rect.topleft = Point(self.hold_rect.centerx - self.hold_text_rect.centerx, self.hold_rect.y - self.hold_text_rect.h - self.hold_padding.y)
         self.queue_rect = Rect(self.hold_rect.x + 5, self.hold_rect.y + self.hold_rect.h + 5, self.hold_rect.w - 10, 400)
         self.queue_surface = pygame.Surface(self.queue_rect.size)
         self.queue_padding = Point(10, 10)
@@ -469,8 +473,8 @@ class PyTetrisGame(GameScreen):
 
     def draw_hold(self):
         """Draw the the hold and it's contents"""
+        self.screen.blit(self.hold_text, self.hold_text_rect)
         self.hold_surface.fill((0, 0, 0))
-        # self.player.matrix_size
         if self.hold:
             peice_surface = self.hold.get_surface(self.cells, self.hold_cell_size)
             self.hold_surface.blit(peice_surface, (self.hold_padding.x + self.hold_cell_size.x * (4 - self.hold.matrix_size.x) // 2, self.hold_padding.y + self.hold_cell_size.y * (4 - self.hold.matrix_size.x) // 2))
@@ -579,7 +583,8 @@ class MainMenu(MenuScreen):
         super().__init__(screen, window_size, frame_rate = 10)
         # lucidaconsole, lucidasans, agencyfb, copperplategothic, dubairegualar
         # font = pygame.font.SysFont('lucidaconsole', 60)
-        font = pygame.font.Font('assets/tetris-atari.ttf', 30)
+        self.font_path = 'assets/tetris-atari.ttf'
+        font = pygame.font.Font(self.font_path, 30)
         game = PyTetrisGame(self)
         self.buttons = [
             Button(game.run, 'Play', Rect(40, 190, 260, 100), font, border_size = 2),
