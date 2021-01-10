@@ -63,7 +63,21 @@ class GameScreen:
     """
     A class to reperesent a screen inside a pygame application
     e.g.: menu, pause screen, or main screen
+    to use this class, inherit it and overwrite some/all of its functions
+    :example:
 
+        class Example(GameScreen):
+            def __init__(self):
+                pygame.init()
+                real_size = Point(600, 600) # size of window itself
+                size = Point(real_size.x / 40, real_size.y / 40) # 1 pixel for every 40
+                super().__init__(pygame.display.set_mode(real_size), real_size, size)
+
+            def update(self):
+                pygame.draw.line(self.screen, (255, 255, 255), (0, self.window_size.y / 2), (self.window_size.x, self.window_size.y / 2))
+
+        example = Example()
+        example.run()
     """
 
     def __init__(self, screen: pygame.Surface, real_window_size: Point, window_size: Point = None, frame_rate: int = 30):
@@ -75,11 +89,11 @@ class GameScreen:
             if this is larger than real_window_size the pixels become smaller
         :frame_rate: The desired frame rate of the current screen
         """
-        self.scaled = bool(window_size) and window_size != real_window_size
+        self.window_scaled = bool(window_size) and window_size != real_window_size
         self.real_screen = screen
-        self.screen = screen if not self.scaled else pygame.Surface(window_size)
+        self.screen = screen if not self.window_scaled else pygame.Surface(window_size)
         self.real_window_size = real_window_size
-        self.window_size = window_size if self.scaled else real_window_size
+        self.window_size = window_size if self.window_scaled else real_window_size
         self.frame_rate = frame_rate
         self.running = False
         self.rect = self.screen.get_rect()
@@ -128,7 +142,7 @@ class GameScreen:
             for event in pygame.event.get():
                 self.handle_event(event)
             self.update()
-            if self.scaled:
+            if self.window_scaled:
                 self.real_screen.blit(pygame.transform.scale(self.screen, self.real_window_size), (0, 0))
             pygame.display.update()
             self.tick()
