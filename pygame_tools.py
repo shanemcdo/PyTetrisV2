@@ -128,6 +128,8 @@ class GameScreen:
             for event in pygame.event.get():
                 self.handle_event(event)
             self.update()
+            if self.scaled:
+                self.real_screen.blit(pygame.transform.scale(self.screen, self.real_window_size), (0, 0))
             pygame.display.update()
             self.tick()
 
