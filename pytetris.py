@@ -542,6 +542,9 @@ class PyTetrisGame(MenuScreen):
         # draw board to the screen
         self.screen.blit(self.board_surface, self.board_surface_pos)
         # draw border around board
+        self.draw_board_border()
+
+    def draw_board_border(self):
         pygame.draw.rect(self.screen, (100, 100, 100), (self.board_surface_pos, self.board_surface_size), 2)
 
     def load_cells_from_image(self, file_name: str) -> [pygame.Surface]:
@@ -664,21 +667,30 @@ class PauseMenu(MenuScreen):
         super().__init__(parent.screen, parent.window_size)
         self.parent = parent
         self.font_path = parent.font_path
-        back_button_font = parent.pause_button_font
-        back_button_rect = parent.pause_button_rect
+        self.board_rect = Rect(parent.board_surface_pos, parent.board_surface_size)
+        exit_button_font = parent.pause_button_font
+        exit_button_rect = parent.pause_button_rect
+        center_buttons_padding = Point(20, 20)
+        center_buttons_size = Point(self.board_rect.w - center_buttons_padding.x * 2, 50)
+        center_buttons_pos = Point(self.board_rect.centerx - center_buttons_size.x // 2, self.board_rect.top + center_buttons_padding.y)
         self.buttons = [
-                Button(self.back, 'Back', back_button_rect, back_button_font)
+                Button(self.exit, 'Exit', exit_button_rect, exit_button_font),
+                Button(self.resume, 'Resume', Rect((center_buttons_pos.x, center_buttons_pos.y), center_buttons_size), exit_button_font)
                 ]
 
     def update(self):
+        self.screen.fill((0, 0, 0), self.board_rect)
+        self.parent.draw_board_border()
         super().update()
 
     def key_down(self, event: pygame.event.Event):
-        print(event.key, K_p, K_ESCAPE)
         if event.key == K_p or event.key == K_ESCAPE:
-            self.running = False
+            self.resume()
 
-    def back(self):
+    def resume(self):
+        self.running = False
+
+    def exit(self):
         self.running = False
         self.parent.exit()
 
