@@ -353,6 +353,9 @@ class PyTetrisGame(GameScreen):
         self.queue_text = pygame.font.Font(self.font_path, 20).render('Queue', True, (255, 255, 255))
         self.queue_text_rect = self.queue_text.get_rect()
         self.queue_text_rect.topleft = Point(self.queue_rect.centerx - self.queue_text_rect.centerx, self.queue_rect.y - self.queue_text_rect.h - self.queue_padding.y)
+        self.statistics_font_size = 12
+        self.statistics_font = pygame.font.Font(self.font_path, self.statistics_font_size)
+        self.statistics_padding = Point(10, 50)
         self.peices = [
                 Peice(
                     [
@@ -445,6 +448,7 @@ class PyTetrisGame(GameScreen):
         return self.queue.pop(0)
 
     def reset(self):
+        self.score = 0
         self.level = 0
         self.can_swap_hold = True
         self.hold = None
@@ -475,6 +479,20 @@ class PyTetrisGame(GameScreen):
         if new_bag or not hasattr(self, 'grab_bag') or not self.grab_bag:
             self.grab_bag = deepcopy(self.peices)
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
+
+    def draw_statistics(self):
+        """
+        Print the games statistics
+        e.g. Score, level, etc
+        """
+        for i, string in enumerate([
+            f'Score: {self.score}',
+            f'Level: {self.level}',
+            f'Cleared: {self.lines_cleared}',
+            'Till next',
+            f'level: {self.LEVEL_LINES[self.level] - self.lines_cleared_since_level_up}',
+            ]):
+            self.screen.blit(self.statistics_font.render(string, True, (255, 255, 255)), (self.statistics_padding.x, self.statistics_padding.y + (10 + self.statistics_font_size) * i))
 
     def draw_hold(self):
         """Draw the the hold and it's contents"""
@@ -540,6 +558,7 @@ class PyTetrisGame(GameScreen):
         self.draw_board()
         self.draw_hold()
         self.draw_queue()
+        self.draw_statistics()
         if self.delay_counters['ARE_lock']():
             self.ARE_locked = False
         self.keyboard_input()
