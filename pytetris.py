@@ -673,9 +673,11 @@ class PauseMenu(MenuScreen):
         center_buttons_padding = Point(20, 20)
         center_buttons_size = Point(self.board_rect.w - center_buttons_padding.x * 2, 50)
         center_buttons_pos = Point(self.board_rect.centerx - center_buttons_size.x // 2, self.board_rect.top + center_buttons_padding.y)
+        i = 0
         self.buttons = [
                 Button(self.exit, 'Exit', exit_button_rect, exit_button_font),
-                Button(self.resume, 'Resume', Rect((center_buttons_pos.x, center_buttons_pos.y), center_buttons_size), exit_button_font)
+                Button(self.resume, 'Resume', Rect(center_buttons_pos, center_buttons_size), exit_button_font),
+                Button(self.parent.parent.options_menu.run, 'Options', Rect((center_buttons_pos.x, center_buttons_pos.y + (center_buttons_size.y + center_buttons_padding.y) * (i := i + 1)), center_buttons_size), exit_button_font)
                 ]
 
     def update(self):
@@ -704,13 +706,13 @@ class MainMenu(MenuScreen):
         # font = pygame.font.SysFont('lucidaconsole', 60)
         self.font_path = 'assets/tetris-atari.ttf'
         font = pygame.font.Font(self.font_path, 30)
-        game = PyTetrisGame(self)
-        options_menu = OptionsMenu(self)
-        controls_menu = ControlsMenu(self)
+        self.options_menu = OptionsMenu(self)
+        self.controls_menu = ControlsMenu(self)
+        self.game = PyTetrisGame(self)
         self.buttons = [
-            Button(game.run, 'Play', Rect(40, 190, 260, 100), font, border_size = 2),
-            Button(controls_menu.run, 'Controls', Rect(40, 300, 260, 100), font, border_size = 2),
-            Button(options_menu.run, 'Options', Rect(40, 410, 260, 100), font, border_size = 2),
+            Button(self.game.run, 'Play', Rect(40, 190, 260, 100), font, border_size = 2),
+            Button(self.controls_menu.run, 'Controls', Rect(40, 300, 260, 100), font, border_size = 2),
+            Button(self.options_menu.run, 'Options', Rect(40, 410, 260, 100), font, border_size = 2),
             Button(sys.exit, 'Quit', Rect(40, 520, 260, 100), font, border_size = 2),
             ]
         # TODO: Create acutally good background / title <07-01-21, ShaneMcDonough>
