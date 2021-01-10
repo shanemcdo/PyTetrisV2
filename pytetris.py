@@ -257,7 +257,6 @@ class PyTetrisGame(MenuScreen):
     runs the game logic
     """
 
-    i = 0
     SCORE_DICT = {
             # TODO
             }
@@ -324,6 +323,7 @@ class PyTetrisGame(MenuScreen):
             27: 200,
             28: 200,
             }
+    # TODO: check if this is actually true
     SOFT_DROP_DELAY = 2 # 1 cell per 2 frames
     DAS_INITIAL_DELAY = 16 # 1 cell per 16 frames; inital speed when holding button
     DAS_REPEAT_DELAY = 6 # 1 cell per 6 frames; speed after first iteration of holding button
@@ -611,6 +611,11 @@ class PyTetrisGame(MenuScreen):
         if event.key == K_ESCAPE or event.key == K_p:
             self.no_pause = False
 
+    def key_down(self, event: pygame.event.Event):
+        """This function doesn't let K_SPACE into the inherited key_down function"""
+        if event.key != K_SPACE:
+            super().key_down(event)
+
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
         keys = pygame.key.get_pressed()
@@ -637,6 +642,8 @@ class PyTetrisGame(MenuScreen):
 
 class OptionsMenu(MenuScreen):
     """The options menu for the pytetris game"""
+    # TODO: Add real options
+    # TODO: Finish this
 
     def __init__(self, parent: GameScreen):
         super().__init__(parent.screen, parent.window_size, frame_rate = 10)
