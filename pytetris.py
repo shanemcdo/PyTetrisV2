@@ -688,9 +688,13 @@ class PauseMenu(MenuScreen):
         self.board_rect = Rect(parent.board_surface_pos, parent.board_surface_size)
         exit_button_font = parent.pause_button_font
         exit_button_rect = parent.pause_button_rect
-        center_buttons_padding = Point(20, 20)
+        self.title = pygame.font.Font(self.font_path, 40).render('Paused', True, (255, 255, 255))
+        self.title_padding = Point(20, 20)
+        self.title_rect = Rect((0, 0), self.title.get_size())
+        self.title_rect.center = self.board_rect.centerx, self.board_rect.top + self.title_padding.y + self.title_rect.h
+        center_buttons_padding = Point(40, 40)
         center_buttons_size = Point(self.board_rect.w - center_buttons_padding.x * 2, 60)
-        center_buttons_pos = Point(self.board_rect.centerx - center_buttons_size.x // 2, self.board_rect.top + center_buttons_padding.y)
+        center_buttons_pos = Point(self.board_rect.centerx - center_buttons_size.x // 2, self.board_rect.top + center_buttons_padding.y + self.title_padding.y * 2 + self.title_rect.h)
         i = 0
         self.buttons = [
                 Button(self.resume, 'Resume', Rect(center_buttons_pos, center_buttons_size), exit_button_font),
@@ -700,9 +704,11 @@ class PauseMenu(MenuScreen):
                 ]
 
     def update(self):
+        self.screen.fill((0, 0, 0))
         self.parent.draw()
         self.screen.fill((0, 0, 0), self.board_rect)
         self.parent.draw_board_border()
+        self.screen.blit(self.title, self.title_rect)
         super().update()
 
     def key_down(self, event: pygame.event.Event):
