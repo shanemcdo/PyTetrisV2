@@ -163,13 +163,11 @@ class Peice:
                 +--+--+--+--+      +--+--+--+--+
                 |30|31|32|33|      |33|23|13|03|
                 +--+--+--+--+      +--+--+--+--+
+        :board: a 2d array of Cells the Peice cannot intersect with
+        :returns: boolean of success
         """
         matrix = [[self.matrix[self.matrix_size.y - j - 1][i] for j in range(self.matrix_size.x)] for i in range(self.matrix_size.y)]
-        rotated, pos = self.check_valid_rotate(board, peice_matrix = matrix)
-        if rotated:
-            self.pos = pos
-            self.matrix = matrix
-        return rotated
+        return self.rotate_to(board, matrix)
 
     def rotate_left(self, board: [[Cell]]):
         """
@@ -186,17 +184,32 @@ class Peice:
                 +--+--+--+--+      +--+--+--+--+
                 |30|31|32|33|      |00|10|20|30|
                 +--+--+--+--+      +--+--+--+--+
+        :board: a 2d array of Cells the Peice cannot intersect with
+        :returns: boolean of success
         """
         matrix = [[self.matrix[j][self.matrix_size.x - i - 1] for j in range(self.matrix_size.x)] for i in range(self.matrix_size.y)]
+        return self.rotate_to(board, matrix)
+
+    def rotate_to(self, board: [[Cell]], matrix: [[Cell]]) -> bool:
+        """
+        attempts to rotate the peice to the passed matrix
+        :matrix: Optional. defaults to {self.matrix}. peice represented in a 2d array of type Cell
+        :returns: boolean of success
+        """
         rotated, pos = self.check_valid_rotate(board, peice_matrix = matrix)
         if rotated:
             self.pos = pos
             self.matrix = matrix
-        # TODO: Push the matrix around if it can't rotate <08-01-21, Shane McDonough> #
         return rotated
 
     def check_valid_rotate(self, board: [[Cell]], pos: Point = None, peice_matrix: [[Cell]] = None) -> (bool, Point):
-        """Check if a rotated rotated position is ok and move it around slightly if it can"""
+        """
+        Check if a rotated rotated position is ok and move it around slightly if it can
+        :board: a 2d array of Cells the Peice cannot intersect with
+        :pos: Optional. deaults to {self.pos}. the coordinates of the peice
+        :matrix: Optional. defaults to {self.matrix}. peice represented in a 2d array of type Cell
+        :returns: a boolean of succes and the point in ended up landing in if it succeeded
+        """
         if not peice_matrix:
             peice_matrix = self.matrix
         if not pos:
