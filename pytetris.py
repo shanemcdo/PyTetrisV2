@@ -165,7 +165,9 @@ class Peice:
                 +--+--+--+--+      +--+--+--+--+
         """
         matrix = [[self.matrix[self.matrix_size.y - j - 1][i] for j in range(self.matrix_size.x)] for i in range(self.matrix_size.y)]
-        if rotated := self.check_valid_position(board, peice_matrix = matrix):
+        rotated, pos = self.check_valid_rotate(board, peice_matrix = matrix)
+        if rotated:
+            self.pos = pos
             self.matrix = matrix
         return rotated
 
@@ -186,10 +188,34 @@ class Peice:
                 +--+--+--+--+      +--+--+--+--+
         """
         matrix = [[self.matrix[j][self.matrix_size.x - i - 1] for j in range(self.matrix_size.x)] for i in range(self.matrix_size.y)]
-        if rotated := self.check_valid_position(board, peice_matrix = matrix):
+        rotated, pos = self.check_valid_rotate(board, peice_matrix = matrix)
+        if rotated:
+            self.pos = pos
             self.matrix = matrix
         # TODO: Push the matrix around if it can't rotate <08-01-21, Shane McDonough> #
         return rotated
+
+    def check_valid_rotate(self, board: [[Cell]], pos: Point = None, peice_matrix: [[Cell]] = None) -> (bool, Point):
+        """Check if a rotated rotated position is ok and move it around slightly if it can"""
+        if not peice_matrix:
+            peice_matrix = self.matrix
+        if not pos:
+            pos = self.pos
+        directions = [
+                Point(0, 0),
+                Point(0, 1),
+                Point(1, 1),
+                Point(-1, 1),
+                Point(1, 0),
+                Point(-1, 0),
+                Point(1, -1),
+                Point(-1, -1),
+                ]
+        for direction in directions:
+            shifted = Point(pos.x + direction.x, pos.y + direction.y)
+            if self.check_valid_position(board, shifted, peice_matrix):
+                return True, shifted
+        return False, None
 
     def check_valid_position(self, board: [[Cell]], pos: Point = None, peice_matrix: [[Cell]] = None) -> bool:
         """Check if the position passed is avaliale for the this object"""
