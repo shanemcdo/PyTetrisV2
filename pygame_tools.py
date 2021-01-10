@@ -237,9 +237,13 @@ class MenuScreen(GameScreen):
         elif event.key == K_RETURN or event.key == K_SPACE:
             self.buttons[self.button_index]()
 
-    def update(self):
+    def draw_buttons(self):
+        """Draw the buttons"""
         for i, button in enumerate(self.buttons):
             button.draw(self.screen, True if i == self.button_index else None)
+
+    def update(self):
+        self.draw_buttons()
 
     def mouse_button_down(self, event: pygame.event.Event):
         if event.button == 1:

@@ -487,6 +487,14 @@ class PyTetrisGame(MenuScreen):
             self.grab_bag = deepcopy(self.peices)
         return self.grab_bag.pop(randrange(len(self.grab_bag)))
 
+    def draw(self):
+        """Draw Everything"""
+        self.draw_board()
+        self.draw_hold()
+        self.draw_queue()
+        self.draw_statistics()
+        self.draw_buttons()
+
     def draw_statistics(self):
         """
         Print the games statistics
@@ -567,11 +575,7 @@ class PyTetrisGame(MenuScreen):
 
     def update(self):
         self.screen.fill((0, 0, 0))
-        self.draw_board()
-        self.draw_hold()
-        self.draw_queue()
-        self.draw_statistics()
-        super().update()
+        self.draw()
         if self.delay_counters['ARE_lock']():
             self.ARE_locked = False
         self.keyboard_input()
@@ -682,6 +686,7 @@ class PauseMenu(MenuScreen):
                 ]
 
     def update(self):
+        self.parent.draw()
         self.screen.fill((0, 0, 0), self.board_rect)
         self.parent.draw_board_border()
         super().update()
