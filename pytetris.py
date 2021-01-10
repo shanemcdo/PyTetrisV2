@@ -671,7 +671,7 @@ class PauseMenu(MenuScreen):
         exit_button_font = parent.pause_button_font
         exit_button_rect = parent.pause_button_rect
         center_buttons_padding = Point(20, 20)
-        center_buttons_size = Point(self.board_rect.w - center_buttons_padding.x * 2, 50)
+        center_buttons_size = Point(self.board_rect.w - center_buttons_padding.x * 2, 60)
         center_buttons_pos = Point(self.board_rect.centerx - center_buttons_size.x // 2, self.board_rect.top + center_buttons_padding.y)
         i = 0
         self.buttons = [
