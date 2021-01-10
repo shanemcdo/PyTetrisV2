@@ -210,6 +210,7 @@ class Peice:
         :matrix: Optional. defaults to {self.matrix}. peice represented in a 2d array of type Cell
         :returns: a boolean of succes and the point in ended up landing in if it succeeded
         """
+        # TODO: EDGECASE WITH I PEICE NEEDING TO MOVE 2
         if not peice_matrix:
             peice_matrix = self.matrix
         if not pos:
