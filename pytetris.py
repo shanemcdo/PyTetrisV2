@@ -6,7 +6,7 @@ from enum import Enum
 from copy import deepcopy
 from random import randrange
 from collections import namedtuple
-from pygame_tools import Point, Button, GameScreen, MenuScreen, clip_surface
+from pygame_tools import Point, Button, GameScreen, MenuScreen, clip_surface, ToggleButton
 
 
 def new_matrix(width: int, height: int = None, value = None) -> [[]]:
@@ -612,6 +612,22 @@ class PyTetrisGame(GameScreen):
         if keys[K_SPACE]:
             self.swap_hold()
 
+class OptionsMenu(MenuScreen):
+    """The options menu for the pytetris game"""
+
+    def __init__(self, parent: GameScreen):
+        super().__init__(parent.screen, parent.window_size, frame_rate = 10)
+        self.parent = parent
+        self.font_path = parent.font_path
+        font = pygame.font.Font(self.font_path, 30)
+        self.buttons = [
+                ToggleButton(None, 'On', 'Off', Rect(40, 40, 200, 100), font)
+                ]
+
+    def update(self):
+        self.screen.fill((0, 50, 100))
+        super().update()
+
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
 
@@ -622,10 +638,11 @@ class MainMenu(MenuScreen):
         self.font_path = 'assets/tetris-atari.ttf'
         font = pygame.font.Font(self.font_path, 30)
         game = PyTetrisGame(self)
+        options_menu = OptionsMenu(self)
         self.buttons = [
             Button(game.run, 'Play', Rect(40, 190, 260, 100), font, border_size = 2),
             Button(lambda: print('Controls'), 'Controls', Rect(40, 300, 260, 100), font, border_size = 2),
-            Button(lambda: print('Options'), 'Options', Rect(40, 410, 260, 100), font, border_size = 2),
+            Button(options_menu.run, 'Options', Rect(40, 410, 260, 100), font, border_size = 2),
             Button(sys.exit, 'Quit', Rect(40, 520, 260, 100), font, border_size = 2),
             ]
         # TODO: Create acutally good background / title <07-01-21, ShaneMcDonough>
