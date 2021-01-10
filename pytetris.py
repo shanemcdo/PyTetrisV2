@@ -257,6 +257,7 @@ class PyTetrisGame(MenuScreen):
     runs the game logic
     """
 
+    i = 0
     SCORE_DICT = {
             # TODO
             }
@@ -459,7 +460,7 @@ class PyTetrisGame(MenuScreen):
         self.can_swap_hold = True
         self.hold = None
         self.ARE_locked = False
-        self.paused = False
+        self.no_pause = False
         self.lines_cleared = 0
         self.lines_cleared_since_level_up = 0
         self.delay_counters = {
@@ -605,10 +606,16 @@ class PyTetrisGame(MenuScreen):
             if not self.player.move_down(self.board):
                 self.lock_and_get_new_peice()
 
+    def key_up(self, event: pygame.event.Event):
+        """This is triggered when a key is released"""
+        if event.key == K_ESCAPE or event.key == K_p:
+            self.no_pause = False
+
     def keyboard_input(self):
         """Use pygame.key.get_pressed for input instead of keyboard events"""
         keys = pygame.key.get_pressed()
-        if keys[K_ESCAPE] or keys[K_p]:
+        if (keys[K_ESCAPE] or keys[K_p]) and not self.no_pause:
+            self.no_pause = True
             self.pause_menu.run()
         if not self.ARE_locked:
             if self.delay_counters['soft_drop'].run_or_reset(keys[K_s]):
