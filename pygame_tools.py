@@ -24,7 +24,7 @@ class Button:
             rect_color: Color = (255, 255, 255),
             highlight_color: Color = (150, 150, 150),
             font_color: Color = (0, 0, 0),
-            width: int = 0,
+            rect_line_width: int = 0,
             border_radius: int = 0,
             border_size: int = 0,
             border_color: Color = (0, 0, 0),
@@ -37,7 +37,7 @@ class Button:
         self.rect_color = rect_color
         self.font_color = font_color
         self.highlight_color = highlight_color
-        self.width = width
+        self.rect_line_width = rect_line_width
         self.border_radius = border_radius
         self.border_size = border_size
         self.border_color = border_color
@@ -45,8 +45,8 @@ class Button:
         self.clicked = False
         self.highlight = False
 
-    def draw(self, screen: pygame.Surface, overridde_highlight: bool = None):
-        pygame.draw.rect(screen, self.clicked_color if self.clicked else self.highlight_color if (overridde_highlight == None and self.highlight) or overridde_highlight else self.rect_color, self.rect, self.width, self.border_radius)
+    def draw(self, screen: pygame.Surface, override_highlight: bool = None):
+        pygame.draw.rect(screen, self.clicked_color if self.clicked else self.highlight_color if (override_highlight == None and self.highlight) or override_highlight else self.rect_color, self.rect, self.rect_line_width, self.border_radius)
         self.clicked = False
         if self.border_size > 0:
             pygame.draw.rect(screen, self.border_color, self.rect, self.border_size, self.border_radius)
@@ -56,8 +56,73 @@ class Button:
 
     def __call__(self):
         """Overwrite the () operator on the button object"""
-        self.action()
+        if self.action:
+            self.action()
         self.clicked = True
+
+class ToggleButton:
+    """When clickd this button will change its color, text, and also call target"""
+
+    def __init__(
+            self,
+            action: callable,
+            on_text: str,
+            off_text: str,
+            rect: Rect,
+            font: pygame.font.Font,
+            on_rect_color: Color = (255, 255, 255),
+            off_rect_color: Color = None,
+            on_highlight_color: Color = (150, 150, 150),
+            off_highlight_color: Color = (150, 150, 150),
+            on_font_color: Color = (0, 0, 0),
+            off_font_color: Color = (0, 0, 0),
+            rect_line_width: int = 0,
+            border_radius: int = 0,
+            border_size: int = 0,
+            on_border_color: Color = (0, 0, 0),
+            off_border_color: Color = None,
+            toggled: bool = False,
+            ):
+        self.action = action
+        self.on_text = on_text
+        self.off_text = off_text
+        self.rect = rect
+        self.font = font
+        self.on_rect_color = on_rect_color
+        self.off_rect_color = off_rect_color if off_rect_color else on_rect_color
+        self.on_highlight_color = on_highlight_color
+        self.off_highlight_color = off_highlight_color
+        self.on_font_color = on_font_color
+        self.off_font_color = off_font_color
+        self.rect_line_width = rect_line_width
+        self.border_radius = border_radius
+        self.border_size = border_size
+        self.on_border_color = on_border_color
+        self.off_border_color = off_border_color if off_border_color else on_border_color
+        self.highlight = False
+        self.toggled = toggled
+
+    def draw(self, screen: pygame.Surface, override_highlight: bool = None):
+        if self.toggled:
+            pygame.draw.rect(screen, self.on_highlight_color if (override_highlight == None and self.highlight) or override_highlight else self.on_rect_color, self.rect, self.rect_line_width, self.border_radius)
+            if self.border_size > 0:
+                pygame.draw.rect(screen, self.on_border_color, self.rect, self.border_size, self.border_radius)
+            text_obj = self.font.render(self.on_text, True, self.on_font_color)
+            text_size = text_obj.get_size()
+            screen.blit(text_obj, (self.rect.centerx - text_size[0] / 2, self.rect.centery - text_size[1] / 2))
+        else:
+            pygame.draw.rect(screen, self.off_highlight_color if (override_highlight == None and self.highlight) or override_highlight else self.on_rect_color, self.rect, self.rect_line_width, self.border_radius)
+            if self.border_size > 0:
+                pygame.draw.rect(screen, self.off_border_color, self.rect, self.border_size, self.border_radius)
+            text_obj = self.font.render(self.off_text, True, self.on_font_color)
+            text_size = text_obj.get_size()
+            screen.blit(text_obj, (self.rect.centerx - text_size[0] / 2, self.rect.centery - text_size[1] / 2))
+
+    def __call__(self):
+        """override the ()"""
+        if self.action:
+            self.action()
+        self.toggled = not self.toggled
 
 class GameScreen:
     """
