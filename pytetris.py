@@ -451,7 +451,7 @@ class PyTetrisGame(GameScreen):
         self.ARE_locked = False
         self.delay_counters = {
                 'ARE_lock': TrueEvery(self.ARE_DELAY, once = True, start_value = self.ARE_DELAY),
-                'soft_drop': TrueEvery(self.SOFT_DROP_DELAY),
+                'soft_drop': TrueEvery(self.SOFT_DROP_DELAY, start_value = self.SOFT_DROP_DELAY),
                 'auto_drop': TrueEvery(self.LEVEL_FRAMES[self.level]),
                 'DAS_fast_drop': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 'DAS_move_left': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
