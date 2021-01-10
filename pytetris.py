@@ -628,6 +628,25 @@ class OptionsMenu(MenuScreen):
         self.screen.fill((0, 50, 100))
         super().update()
 
+class ControlsMenu(MenuScreen):
+    # TODO: Add ability for user to remap controls
+
+    def __init__(self, parent: GameScreen):
+        super().__init__(parent.screen, parent.window_size)
+        self.parent = parent
+        self.font_path = parent.font_path
+        back_button_font = pygame.font.Font(self.font_path, 15)
+        self.buttons = [
+                Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font)
+                ]
+
+    def update(self):
+        self.screen.fill((0, 50, 100))
+        super().update()
+
+    def back(self):
+        self.running = False
+
 class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
 
@@ -639,9 +658,10 @@ class MainMenu(MenuScreen):
         font = pygame.font.Font(self.font_path, 30)
         game = PyTetrisGame(self)
         options_menu = OptionsMenu(self)
+        controls_menu = ControlsMenu(self)
         self.buttons = [
             Button(game.run, 'Play', Rect(40, 190, 260, 100), font, border_size = 2),
-            Button(lambda: print('Controls'), 'Controls', Rect(40, 300, 260, 100), font, border_size = 2),
+            Button(controls_menu.run, 'Controls', Rect(40, 300, 260, 100), font, border_size = 2),
             Button(options_menu.run, 'Options', Rect(40, 410, 260, 100), font, border_size = 2),
             Button(sys.exit, 'Quit', Rect(40, 520, 260, 100), font, border_size = 2),
             ]
