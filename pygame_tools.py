@@ -36,7 +36,7 @@ class Button:
         self.font = font
         self.rect_color = rect_color
         self.font_color = font_color
-        self.highlight_color = highlight_color
+        self.highlight_color = highlight_color if highlight_color else rect_color
         self.rect_line_width = rect_line_width
         self.border_radius = border_radius
         self.border_size = border_size

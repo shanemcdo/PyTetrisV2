@@ -251,7 +251,7 @@ class Peice:
                     board[i + self.pos.y][j + self.pos.x] = cell
 
 # TODO: Show queue, hold, and maybe grab_bag
-class PyTetrisGame(GameScreen):
+class PyTetrisGame(MenuScreen):
     """
     The pytetris game itself.
     runs the game logic
@@ -332,6 +332,8 @@ class PyTetrisGame(GameScreen):
         super().__init__(parent.screen, parent.window_size, frame_rate = 60)
         self.parent = parent
         self.font_path = self.parent.font_path
+        self.pause_button_font = pygame.font.Font(self.font_path, 15)
+        self.pause_button_rect = Rect(10, 10, 100, 50)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.board_surface_size = Point(300, 600) # work in multiples of 10s and 20s or the bord gets wonky
@@ -355,7 +357,7 @@ class PyTetrisGame(GameScreen):
         self.queue_text_rect.topleft = Point(self.queue_rect.centerx - self.queue_text_rect.centerx, self.queue_rect.y - self.queue_text_rect.h - self.queue_padding.y)
         self.statistics_font_size = 12
         self.statistics_font = pygame.font.Font(self.font_path, self.statistics_font_size)
-        self.statistics_padding = Point(10, 50)
+        self.statistics_padding = Point(10, 10 + self.pause_button_rect.bottom)
         self.peices = [
                 Peice(
                     [
@@ -426,6 +428,9 @@ class PyTetrisGame(GameScreen):
         self.queue_size = 7 # arbitrary number
         self.reset()
         self.pause_menu = PauseMenu(self)
+        self.buttons = [
+                Button(self.pause_menu.run, 'Pause', self.pause_button_rect, self.pause_button_font, highlight_color = None)
+                ]
 
     def clear_lines(self) -> int:
         """
@@ -563,6 +568,7 @@ class PyTetrisGame(GameScreen):
         self.draw_hold()
         self.draw_queue()
         self.draw_statistics()
+        super().update()
         if self.delay_counters['ARE_lock']():
             self.ARE_locked = False
         self.keyboard_input()
@@ -658,9 +664,10 @@ class PauseMenu(MenuScreen):
         super().__init__(parent.screen, parent.window_size)
         self.parent = parent
         self.font_path = parent.font_path
-        back_button_font = pygame.font.Font(self.font_path, 15)
+        back_button_font = parent.pause_button_font
+        back_button_rect = parent.pause_button_rect
         self.buttons = [
-                Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font)
+                Button(self.back, 'Back', back_button_rect, back_button_font)
                 ]
 
     def update(self):
