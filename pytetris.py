@@ -450,6 +450,8 @@ class PyTetrisGame(GameScreen):
         self.hold = None
         self.ARE_locked = False
         self.delay_counters = {
+        self.lines_cleared = 0
+        self.lines_cleared_since_level_up = 0
                 'ARE_lock': TrueEvery(self.ARE_DELAY, once = True, start_value = self.ARE_DELAY),
                 'soft_drop': TrueEvery(self.SOFT_DROP_DELAY, start_value = self.SOFT_DROP_DELAY),
                 'auto_drop': TrueEvery(self.LEVEL_FRAMES[self.level]),
@@ -543,11 +545,20 @@ class PyTetrisGame(GameScreen):
         self.keyboard_input()
         self.auto_drop()
 
+    def level_up(self):
+        self.level += 1
+        self.lines_cleared_since_level_up = 0
+        self.delay_counters['auto_drop'].count = self.LEVEL_FRAMES[self.level]
+
     def lock_and_get_new_peice(self):
         """Lock {self.player} in place and get a new peice from the queue"""
         self.player.lock(self.board)
         self.player = self.get_from_queue()
-        self.clear_lines()
+        lines += self.clear_lines()
+        self.lines_cleared += lines
+        self.lines_cleared_since_level_up += lines
+        if self.level != 29 and self.lines_cleared_since_level_up > self.LEVEL_LINES[self.level]:
+            level_up()
         self.can_swap_hold = True
         self.delay_counters['ARE_lock'].reset()
         self.ARE_locked = True
