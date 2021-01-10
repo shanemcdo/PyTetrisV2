@@ -66,9 +66,20 @@ class GameScreen:
 
     """
 
-    def __init__(self, screen: pygame.Surface, window_size: Point, frame_rate: int = 30):
-        self.screen = screen
-        self.window_size = window_size
+    def __init__(self, screen: pygame.Surface, real_window_size: Point, window_size: Point = None, frame_rate: int = 30):
+        """
+        :screen: The pygame surface that will be drawn onto
+        :real_window_size: The height and width of the screen in real computer pixels
+        :window_size: The height and width of the screen in game pixels pixels
+            if this is smaller than real_window_size the pixels become larger
+            if this is larger than real_window_size the pixels become smaller
+        :frame_rate: The desired frame rate of the current screen
+        """
+        self.scaled = bool(window_size) and window_size != real_window_size
+        self.real_screen = screen
+        self.screen = screen if not self.scaled else pygame.Surface(window_size)
+        self.real_window_size = real_window_size
+        self.window_size = window_size if self.scaled else real_window_size
         self.frame_rate = frame_rate
         self.running = False
         self.rect = self.screen.get_rect()
@@ -126,8 +137,8 @@ class MenuScreen(GameScreen):
     e.g.: Main menu, Pause menu, Options
     """
 
-    def __init__(self, screen: pygame.Surface, window_size: Point, frame_rate: int = 30):
-        super().__init__(screen, window_size, frame_rate)
+    def __init__(self, screen: pygame.Surface, real_window_size: Point, window_size: Point = None, frame_rate: int = 30):
+        super().__init__(screen, real_window_size, window_size, frame_rate)
         self.buttons = []
         self.button_index = 0
 

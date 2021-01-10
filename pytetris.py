@@ -330,7 +330,7 @@ class PyTetrisGame(GameScreen):
 
     def __init__(self, parent: GameScreen):
         self.parent = parent
-        super().__init__(parent.screen, parent.window_size, 60)
+        super().__init__(parent.screen, parent.window_size, frame_rate = 60)
         self.board_size = Point(10, 20)
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.board_surface_size = Point(300, 600) # work in multiples of 10s and 20s or the bord gets wonky
@@ -576,7 +576,7 @@ class MainMenu(MenuScreen):
     """The main menu of the pytetris game"""
 
     def __init__(self, screen: pygame.Surface, window_size: Point):
-        super().__init__(screen, window_size, 10)
+        super().__init__(screen, window_size, frame_rate = 10)
         # lucidaconsole, lucidasans, agencyfb, copperplategothic, dubairegualar
         # font = pygame.font.SysFont('lucidaconsole', 60)
         font = pygame.font.Font('assets/tetris-atari.ttf', 30)
