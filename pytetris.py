@@ -677,7 +677,8 @@ class PauseMenu(MenuScreen):
         self.buttons = [
                 Button(self.exit, 'Exit', exit_button_rect, exit_button_font),
                 Button(self.resume, 'Resume', Rect(center_buttons_pos, center_buttons_size), exit_button_font),
-                Button(self.parent.parent.options_menu.run, 'Options', Rect((center_buttons_pos.x, center_buttons_pos.y + (center_buttons_size.y + center_buttons_padding.y) * (i := i + 1)), center_buttons_size), exit_button_font)
+                Button(self.parent.parent.options_menu.run, 'Options', Rect((center_buttons_pos.x, center_buttons_pos.y + (center_buttons_size.y + center_buttons_padding.y) * (i := i + 1)), center_buttons_size), exit_button_font),
+                Button(self.parent.parent.controls_menu.run, 'Controls', Rect((center_buttons_pos.x, center_buttons_pos.y + (center_buttons_size.y + center_buttons_padding.y) * (i := i + 1)), center_buttons_size), exit_button_font)
                 ]
 
     def update(self):
