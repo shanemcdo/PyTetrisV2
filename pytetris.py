@@ -485,14 +485,16 @@ class PyTetrisGame(GameScreen):
         Print the games statistics
         e.g. Score, level, etc
         """
-        for i, string in enumerate([
-            f'Score: {self.score}',
-            f'Level: {self.level}',
-            f'Cleared: {self.lines_cleared}',
-            'Till next',
-            f'level: {self.LEVEL_LINES[self.level] - self.lines_cleared_since_level_up}',
-            ]):
-            self.screen.blit(self.statistics_font.render(string, True, (255, 255, 255)), (self.statistics_padding.x, self.statistics_padding.y + (10 + self.statistics_font_size) * i))
+        i = 0
+        for (string, skip_line) in {
+            f'Score: {self.score}': True,
+            f'Level: {self.level}': True,
+            f'Cleared: {self.lines_cleared}' : True,
+            'Till next': False,
+            f'level: {self.LEVEL_LINES[self.level] - self.lines_cleared_since_level_up}': True,
+            }.items():
+            self.screen.blit(self.statistics_font.render(string, True, (255, 255, 255)), (self.statistics_padding.x, self.statistics_padding.y + (5 + self.statistics_font_size) * i))
+            i += 2 if skip_line else 1
 
     def draw_hold(self):
         """Draw the the hold and it's contents"""
