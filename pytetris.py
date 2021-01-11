@@ -1,7 +1,8 @@
 """PyTetris is a game that is made to to be a unoffical version of tetris made with pygame"""
 
-import pygame, sys
+import pygame, sys, winsound
 from pygame.locals import *
+from glob import glob
 from enum import Enum
 from copy import deepcopy
 from random import randrange
@@ -433,6 +434,7 @@ class PyTetrisGame(MenuScreen):
         self.buttons = [
                 Button(self.pause_menu.run, 'Pause', self.pause_button_rect, self.pause_button_font, highlight_color = None)
                 ]
+        self.line_clear_sound_paths = glob('assets/audio/clear_*.wav')
 
     def clear_lines(self) -> int:
         """
@@ -600,6 +602,7 @@ class PyTetrisGame(MenuScreen):
         self.level += 1
         self.lines_cleared_since_level_up = 0
         self.delay_counters['auto_drop'].count = self.LEVEL_FRAMES[self.level]
+        winsound.PlaySound('assets/audio/level_up.wav', winsound.SND_ASYNC)
 
     def lock_and_get_new_peice(self):
         """Lock {self.player} in place and get a new peice from the queue"""
@@ -609,7 +612,9 @@ class PyTetrisGame(MenuScreen):
         self.score += self.calculate_score(lines)
         self.lines_cleared += lines
         self.lines_cleared_since_level_up += lines
-        if self.level != 29 and self.lines_cleared_since_level_up > self.LEVEL_LINES[self.level]:
+        if lines != 0:
+            winsound.PlaySound(self.line_clear_sound_paths[lines - 1], winsound.SND_ASYNC)
+        if self.level != 29 and self.lines_cleared_since_level_up >= self.LEVEL_LINES[self.level]:
             self.level_up()
         self.can_swap_hold = True
         self.delay_counters['ARE_lock'].reset()
@@ -714,6 +719,7 @@ class PauseMenu(MenuScreen):
         i = 0
         self.buttons = [
                 Button(self.resume, 'Resume', Rect(center_buttons_pos, center_buttons_size), exit_button_font),
+                Button(self.restart, 'Reset', Rect((center_buttons_pos.x, center_buttons_pos.y + (center_buttons_size.y + center_buttons_padding.y) * (i := i + 1)), center_buttons_size), exit_button_font),
                 Button(self.parent.parent.options_menu.run, 'Options', Rect((center_buttons_pos.x, center_buttons_pos.y + (center_buttons_size.y + center_buttons_padding.y) * (i := i + 1)), center_buttons_size), exit_button_font),
                 Button(self.parent.parent.controls_menu.run, 'Controls', Rect((center_buttons_pos.x, center_buttons_pos.y + (center_buttons_size.y + center_buttons_padding.y) * (i := i + 1)), center_buttons_size), exit_button_font),
                 Button(self.exit, 'Exit', exit_button_rect, exit_button_font),
@@ -734,6 +740,10 @@ class PauseMenu(MenuScreen):
 
     def resume(self):
         self.running = False
+
+    def restart(self):
+        self.running = False
+        self.parent.reset()
 
     def exit(self):
         self.running = False
