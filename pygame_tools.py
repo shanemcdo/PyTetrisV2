@@ -14,7 +14,27 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     return cropped
 
 class Animation:
-    """"""
+    """
+    Represents a object that has multiple frames each with diffrent length
+    :example:
+
+        # assets/animations has files 0.png, 1.png, 2.png, and 3.png
+        a = Animation('assets/animations/*', [30, 7, 7, 7]) # create animation
+        class Example(GameScreen):
+            def __init__(self):
+                pygame.init()
+                size = Point(300, 300)
+                real_size = Point(size.x * 2, size.y * 2)
+                screen = pygame.display.set_mode(real_size)
+                super().__init__(screen, real_size, size)
+
+            def update(self):
+                super().update()
+                self.screen.blit(a.get_surface(), (self.window_size.x / 2, self.window_size.y / 2))
+                a.update()
+
+        Example().run()
+    """
     def __init__(self, glob_path: str, frame_data: [int], repititions: int = None):
         """
         :glob_path: the path that glob is called on.
@@ -307,18 +327,3 @@ class MenuScreen(GameScreen):
                     self.button_index = i
                     button()
 
-if __name__ == "__main__":
-    a = Animation('assets/animations/*', [30, 7, 7, 7])
-    class Example(GameScreen):
-        def __init__(self):
-            pygame.init()
-            size = Point(300, 300)
-            real_size = Point(size.x * 2, size.y * 2)
-            screen = pygame.display.set_mode(real_size)
-            super().__init__(screen, real_size, size)
-
-        def update(self):
-            super().update()
-            self.screen.blit(a.get_surface(), (self.window_size.x / 2, self.window_size.y / 2))
-            a.update()
-    Example().run()
