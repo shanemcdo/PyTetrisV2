@@ -667,13 +667,14 @@ class ControlsMenu(MenuScreen):
         super().__init__(parent.screen, parent.window_size)
         self.parent = parent
         self.font_path = parent.font_path
+        self.background = pygame.image.load('assets/controls_background.png')
         back_button_font = pygame.font.Font(self.font_path, 15)
         self.buttons = [
-                Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font)
+                Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font, highlight_color = None)
                 ]
 
     def update(self):
-        self.screen.fill((0, 50, 100))
+        self.screen.blit(self.background, (0, 0))
         super().update()
 
     def back(self):
