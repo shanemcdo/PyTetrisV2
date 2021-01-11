@@ -426,7 +426,7 @@ class PyTetrisGame(MenuScreen):
                     ),
                 ]
         self.num_of_peices = len(self.peices)
-        self.cells = self.load_cells_from_image('assets/peices.png')
+        self.cells = self.load_cells_from_image('assets/images/peices.png')
         self.queue_size = 7 # arbitrary number
         self.reset()
         self.pause_menu = PauseMenu(self)
@@ -681,7 +681,7 @@ class ControlsMenu(MenuScreen):
         super().__init__(parent.screen, parent.window_size)
         self.parent = parent
         self.font_path = parent.font_path
-        self.background = pygame.image.load('assets/controls_background.png')
+        self.background = pygame.image.load('assets/images/controls_background.png')
         back_button_font = pygame.font.Font(self.font_path, 15)
         self.buttons = [
                 Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font, highlight_color = None)
@@ -747,7 +747,7 @@ class MainMenu(MenuScreen):
         super().__init__(screen, window_size, frame_rate = 10)
         # lucidaconsole, lucidasans, agencyfb, copperplategothic, dubairegualar
         # font = pygame.font.SysFont('lucidaconsole', 60)
-        self.font_path = 'assets/tetris-atari.ttf'
+        self.font_path = 'assets/fonts/tetris-atari.ttf'
         font = pygame.font.Font(self.font_path, 30)
         self.options_menu = OptionsMenu(self)
         self.controls_menu = ControlsMenu(self)
@@ -759,10 +759,10 @@ class MainMenu(MenuScreen):
             Button(sys.exit, 'Quit', Rect(40, 520, 260, 100), font, border_size = 2),
             ]
         # TODO: Create acutally good background / title <07-01-21, ShaneMcDonough>
-        self.background = pygame.image.load('assets/menu_background.png')
+        self.background = pygame.image.load('assets/images/menu_background.png')
         self.background_rect = self.background.get_rect()
         self.background_rect.y = self.window_size.y - self.background_rect.h
-        self.title = pygame.image.load('assets/Title.png')
+        self.title = pygame.image.load('assets/images/Title.png')
 
     def update(self):
         self.screen.fill((0, 0, 0))
