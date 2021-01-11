@@ -670,13 +670,18 @@ class OptionsMenu(MenuScreen):
         self.parent = parent
         self.font_path = parent.font_path
         font = pygame.font.Font(self.font_path, 30)
+        back_button_font = pygame.font.Font(self.font_path, 15)
         self.buttons = [
-                ToggleButton(None, 'On', 'Off', Rect(40, 40, 200, 100), font)
+                ToggleButton(None, 'On', 'Off', Rect(100, 100, 200, 100), font),
+                Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font, highlight_color = None)
                 ]
 
     def update(self):
         self.screen.fill((0, 50, 100))
         super().update()
+
+    def back(self):
+        self.running = False
 
 class ControlsMenu(MenuScreen):
     # TODO: Add ability for user to remap controls
