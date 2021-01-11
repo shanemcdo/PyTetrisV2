@@ -1,6 +1,7 @@
 """Basic classes for creating a pygame application"""
 
 import pygame, sys
+from glob import glob
 from pygame.locals import *
 from collections import namedtuple
 
@@ -11,6 +12,12 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     cropped = pygame.Surface(rect.size)
     cropped.blit(surface, (0, 0), rect)
     return cropped
+
+def load_animations(glob_path: str, frame_data: [int]) -> [(pygame.Surface, int)]:
+    file_names = glob(glob_path)
+    if len(file_names) != len(frame_data):
+        raise ValueError('Length of frame_data and the number of files must be the same')
+    return [(pygame.image.load(file_name), frame_data[i]) for i, file_name in enumerate(file_names)]
 
 class Button:
     """A button in a pygame application"""

@@ -190,6 +190,7 @@ class Peice:
         matrix = [[self.matrix[j][self.matrix_size.x - i - 1] for j in range(self.matrix_size.x)] for i in range(self.matrix_size.y)]
         return self.rotate_to(board, matrix)
 
+    #  TODO: Fix I peice edge case wall kick
     def rotate_to(self, board: [[Cell]], matrix: [[Cell]]) -> bool:
         """
         attempts to rotate the peice to the passed matrix
