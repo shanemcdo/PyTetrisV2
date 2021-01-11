@@ -583,6 +583,18 @@ class PyTetrisGame(MenuScreen):
         self.keyboard_input()
         self.auto_drop()
 
+    def calculate_score(self, lines: int):
+        if lines == 0:
+            return 0
+        elif lines == 1:
+            return 40 * (self.level + 1)
+        elif lines == 2:
+            return 100 * (self.level + 1)
+        elif lines == 3:
+            return 300 * (self.level + 1)
+        elif lines == 4:
+            return 1200 * (self.level + 1)
+
     def level_up(self):
         self.level += 1
         self.lines_cleared_since_level_up = 0
@@ -593,6 +605,7 @@ class PyTetrisGame(MenuScreen):
         self.player.lock(self.board)
         self.player = self.get_from_queue()
         lines = self.clear_lines()
+        self.score += self.calculate_score(lines)
         self.lines_cleared += lines
         self.lines_cleared_since_level_up += lines
         if self.level != 29 and self.lines_cleared_since_level_up > self.LEVEL_LINES[self.level]:
