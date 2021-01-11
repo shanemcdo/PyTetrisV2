@@ -504,7 +504,8 @@ class PyTetrisGame(MenuScreen):
         """
         i = 0
         for (string, skip_line) in {
-            f'Score: {self.score}': True,
+            'Score:' : False,
+            f'{self.score}': True,
             f'Level: {self.level}': True,
             f'Cleared: {self.lines_cleared}' : True,
             'Till next': False,
