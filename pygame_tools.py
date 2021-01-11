@@ -13,11 +13,58 @@ def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     cropped.blit(surface, (0, 0), rect)
     return cropped
 
-def load_animations(glob_path: str, frame_data: [int]) -> [(pygame.Surface, int)]:
-    file_names = glob(glob_path)
-    if len(file_names) != len(frame_data):
-        raise ValueError('Length of frame_data and the number of files must be the same')
-    return [(pygame.image.load(file_name), frame_data[i]) for i, file_name in enumerate(file_names)]
+class Animation:
+    """"""
+    def __init__(self, glob_path: str, frame_data: [int], repititions: int = None):
+        """
+        :glob_path: the path that glob is called on.
+            e.g.: 'assets/animations/*' to get every file in assets/animations
+        :frame_data: how long a frame of the animation should be displayed in game frames
+            e.g.: [7, 8, 9] first image found in glob_path lasts 7, the next lasts 8, and the third lasts 9
+            this must be the same length as the number of items from glob_path
+        :repititions: Optional. defaults to None. if repititions is none, it repeats forever.
+            if this number is an int, it decrements every time update is called until it is zero
+        """
+        self.glob_path = glob_path
+        self.frame_data = frame_data
+        self.repititions = repititions
+        self.finished = True if self.repititions == 0 else False
+        self.load(glob_path, frame_data)
+
+    def update(self):
+        """
+        Indicate a frame has passed
+        """
+        if not self.finished:
+            self.frames_until_next -= 1
+            if self.frames_until_next == 0:
+                self.frame_index = (self.frame_index + 1) % self.frame_count
+                self.frames_until_next += self.frames[self.frame_index][1]
+                if self.frame_index == 0 and self.repititions != None:
+                    self.repititions -= 1
+                    if self.repititions == 0:
+                        self.finished = True
+
+    def get_surface(self) -> pygame.Surface:
+        """return the frame of the current index"""
+        return self.frames[self.frame_index][0]
+
+    def load(self, glob_path: str, frame_data):
+        """
+        Load animations from a glob path
+        :glob_path: the path that glob is called on.
+            e.g.: 'assets/animations/*' to get every file in assets/animations
+        :frame_data: how long a frame of the animation should be displayed in game frames
+            e.g.: [7, 8, 9] first image found in glob_path lasts 7, the next lasts 8, and the third lasts 9
+            this must be the same length as the number of items from glob_path
+        """
+        file_names = glob(glob_path)
+        if len(file_names) != len(frame_data):
+            raise ValueError('Length of frame_data and the number of files must be the same')
+        self.frames = [(pygame.image.load(file_name), frame_data[i]) for i, file_name in enumerate(file_names)]
+        self.frame_count = len(self.frames)
+        self.frame_index = 0
+        self.frames_until_next = self.frames[0][1]
 
 class Button:
     """A button in a pygame application"""
@@ -259,3 +306,19 @@ class MenuScreen(GameScreen):
                 if button.rect.collidepoint(mouse_pos):
                     self.button_index = i
                     button()
+
+if __name__ == "__main__":
+    a = Animation('assets/animations/*', [30, 7, 7, 7])
+    class Example(GameScreen):
+        def __init__(self):
+            pygame.init()
+            size = Point(300, 300)
+            real_size = Point(size.x * 2, size.y * 2)
+            screen = pygame.display.set_mode(real_size)
+            super().__init__(screen, real_size, size)
+
+        def update(self):
+            super().update()
+            self.screen.blit(a.get_surface(), (self.window_size.x / 2, self.window_size.y / 2))
+            a.update()
+    Example().run()
