@@ -3,9 +3,11 @@
 import pygame, sys
 from glob import glob
 from pygame.locals import *
-from collections import namedtuple
+from recordclass import RecordClass
 
-Point = namedtuple('Point', ['x', 'y'])
+class Point(RecordClass):
+    x: float
+    y: float
 
 def clip_surface(surface: pygame.Surface, rect: Rect) -> pygame.Surface:
     """Copy part of a pygame.Surface"""
