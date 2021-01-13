@@ -5,6 +5,56 @@ from glob import glob
 from pygame.locals import *
 from recordclass import RecordClass
 
+class TrueEvery:
+    """This is a functor that creates a function that returns true once every {self.count} calls"""
+
+    def __init__(self, count: int, initial_count: int = None, once: bool = False, start_value: int = 0):
+        """
+        :count: the number of times {self.__call__} must be called to return true once
+        :initial_count: Optional. defaults to {self.count}. the number of times {self._call__} must be called to return True after the first call
+        :once: Optional. defaults to False. the value
+        :start_value: Optional. defaults to 0. the value that the offset starts at before the current call
+        """
+        self.count = count
+        self.initial_count = initial_count if initial_count != None else count
+        self.once = once
+        self.calls = self.start_value = start_value
+        self.first_call = True
+
+    def __call__(self) -> bool:
+        """
+        Override () operator
+        :returns: true once every {self.count} calls
+            always returns true first time run unless start_value is set to something different
+        """
+        # TODO: refactor this
+        if not self.first_call and self.once:
+            return False
+        self.calls -= 1
+        if self.calls <= 0:
+            self.calls = self.initial_count if self.first_call else self.count
+            self.first_call = False
+            return True
+
+    def reset(self, override_start_value: int = None):
+        """
+        reset {self.calls}, and {self.first_call}
+        :override_start_value: Optional. Defaults to self.start_value. set a new start value instead of the one in the constructor
+        """
+        self.calls = override_start_value if override_start_value != None else self.start_value
+        self.first_call = True
+
+    def run_or_reset(self, boolean: bool) -> bool:
+        """
+        :boolean: the boolean to be evaluated. If this boolean is True the {self.__call__} is called.
+            If the boolean is False it calls {self.reset}
+        :returns: a bool. It returns the result of call if {boolean} is True. or it returns False if {boolean} is False
+        """
+        if boolean:
+            return self()
+        self.reset()
+        return False
+
 class Point(RecordClass):
     x: float
     y: float
@@ -70,6 +120,11 @@ class Animation:
     def get_surface(self) -> pygame.Surface:
         """return the frame of the current index"""
         return self.frames[self.frame_index][0]
+
+    def reset(self):
+        """Restart the animation to the start of the loop"""
+        self.frame_index = 0
+        self.frames_until_next = self.frames[0][1]
 
     def load(self, glob_path: str, frame_data):
         """
