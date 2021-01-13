@@ -235,6 +235,7 @@ class GameScreen:
         self.screen = screen if not self.window_scaled else pygame.Surface(window_size)
         self.real_window_size = real_window_size
         self.window_size = window_size if self.window_scaled else real_window_size
+        self.window_scale = Point(self.real_window_size[0] // self.window_size[0], self.real_window_size[1] // self.window_size[1])
         self.frame_rate = frame_rate
         self.running = False
         self.rect = self.screen.get_rect()
@@ -325,7 +326,9 @@ class MenuScreen(GameScreen):
 
     def mouse_button_down(self, event: pygame.event.Event):
         if event.button == 1:
-            mouse_pos = pygame.mouse.get_pos()
+            mouse_pos = Point._make(pygame.mouse.get_pos())
+            if self.window_scaled:
+                mouse_pos = Point(mouse_pos.x // self.window_scale.x, mouse_pos.y // self.window_scale.y)
             for i, button in enumerate(self.buttons):
                 if button.rect.collidepoint(mouse_pos):
                     self.button_index = i
