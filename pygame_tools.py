@@ -245,7 +245,7 @@ class ToggleButton:
             pygame.draw.rect(screen, self.off_highlight_color if (override_highlight == None and self.highlight) or override_highlight else self.off_rect_color, self.rect, self.rect_line_width, self.border_radius)
             if self.border_size > 0:
                 pygame.draw.rect(screen, self.off_border_color, self.rect, self.border_size, self.border_radius)
-            text_obj = self.font.render(self.off_text, True, self.on_font_color)
+            text_obj = self.font.render(self.off_text, True, self.off_font_color)
             text_size = text_obj.get_size()
             screen.blit(text_obj, (self.rect.centerx - text_size[0] / 2, self.rect.centery - text_size[1] / 2))
 

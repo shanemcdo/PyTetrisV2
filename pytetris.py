@@ -623,7 +623,7 @@ class OptionsMenu(MenuScreen):
         back_button_font = pygame.font.Font(self.font_path, 15)
         self.buttons = [
                 Button(self.back, 'Back', Rect(10, 10, 100, 50), back_button_font, highlight_color = None),
-                ToggleButton(None, 'Shadow On', 'Shadow Off', Rect(100, 100, 200, 100), font, (50, 200, 50), (200, 50, 50)),
+                ToggleButton(None, 'Shadow On', 'Shadow Off', Rect(100, 100, 300, 100), font, on_font_color = (50, 200, 50), off_font_color = (200, 50, 50)),
                 ]
         self.button_index = 1
 
