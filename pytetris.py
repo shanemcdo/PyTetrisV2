@@ -398,6 +398,7 @@ class PyTetrisGame(MenuScreen):
                     break
             else:
                 # create clearing lines animations
+                self.cleared_indicies.append(i)
                 self.board.pop(i)
                 self.board.insert(0, [Cell.EMPTY for _ in range(self.board_size.x)])
                 lines += 1
@@ -425,9 +426,11 @@ class PyTetrisGame(MenuScreen):
                 'DAS_move_right': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 'DAS_rotate_left': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 'DAS_rotate_right': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
+                'clear_lines': TrueEvery(15, start_value = 15)
                 }
         self.board = new_matrix(self.board_size.x, self.board_size.y, Cell.EMPTY)
         self.queue = []
+        self.cleared_indicies = []
         for i in range(self.queue_size):
             self.queue.append(self.get_from_grab_bag(i == 0))
         self.player = self.get_from_queue()
@@ -443,11 +446,21 @@ class PyTetrisGame(MenuScreen):
 
     def draw(self):
         """Draw Everything"""
-        self.draw_board()
-        self.draw_hold()
-        self.draw_queue()
-        self.draw_statistics()
-        self.draw_buttons()
+        if self.cleared_indicies == []:
+            self.screen.fill((0, 0, 0))
+            self.draw_board()
+            self.draw_hold()
+            self.draw_queue()
+            self.draw_statistics()
+            self.draw_buttons()
+        else:
+            for i in self.cleared_indicies:
+                surface = pygame.Surface((self.cell_size.x * self.board_size.x, self.cell_size.y))
+                surface.fill('white')
+                self.board_surface.blit(surface, (0, self.cell_size.y * i))
+                self.screen.blit(self.board_surface, self.board_surface_pos)
+            if self.delay_counters['clear_lines']():
+                self.cleared_indicies = []
 
     def draw_statistics(self):
         """
@@ -529,7 +542,6 @@ class PyTetrisGame(MenuScreen):
             self.player.reset()
 
     def update(self):
-        self.screen.fill((0, 0, 0))
         self.draw()
         if self.delay_counters['ARE_lock']():
             self.ARE_locked = False
