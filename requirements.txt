@@ -1,3 +1,4 @@
 pygame==2.0.1
 pyinstaller==4.1
 recordclass==0.14.3 
+pygame-tools==0.0.2
