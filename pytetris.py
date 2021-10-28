@@ -1,6 +1,6 @@
 """PyTetris is a game that is made to to be a unoffical version of tetris made with pygame"""
 
-import pygame, sys, winsound
+import pygame, sys
 from pygame.locals import *
 from glob import glob
 from enum import Enum
@@ -564,7 +564,7 @@ class PyTetrisGame(MenuScreen):
         self.level += 1
         self.lines_cleared_since_level_up = 0
         self.delay_counters['auto_drop'].count = self.LEVEL_FRAMES[self.level]
-        winsound.PlaySound('assets/audio/level_up.wav', winsound.SND_ASYNC)
+        # winsound.PlaySound('assets/audio/level_up.wav', winsound.SND_ASYNC)
 
     def lock_and_get_new_peice(self):
         """Lock {self.player} in place and get a new peice from the queue"""
@@ -574,8 +574,8 @@ class PyTetrisGame(MenuScreen):
         self.score += self.calculate_score(lines)
         self.lines_cleared += lines
         self.lines_cleared_since_level_up += lines
-        if lines != 0:
-            winsound.PlaySound(self.line_clear_sound_paths[lines - 1], winsound.SND_ASYNC)
+        # if lines != 0:
+            # winsound.PlaySound(self.line_clear_sound_paths[lines - 1], winsound.SND_ASYNC)
         if self.level != 29 and self.lines_cleared_since_level_up >= self.LEVEL_LINES[self.level]:
             self.level_up()
         self.can_swap_hold = True
