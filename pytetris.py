@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 """PyTetris is a game that is made to to be a unoffical version of tetris made with pygame"""
+
 
 import pygame, sys
 from pygame.locals import *
