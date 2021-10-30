@@ -387,7 +387,12 @@ class PyTetrisGame(MenuScreen):
                 Button(self.pause_menu.run, 'Pause', self.pause_button_rect, self.pause_button_font, highlight_color = None)
                 ]
         self.line_clear_sounds = list(map(pygame.mixer.Sound, glob('assets/audio/clear_*.wav')))
-        self.level_up_sound = pygame.mixer.Sound('assets/audio/level_up.wav')
+        # self.level_up_sound = pygame.mixer.Sound('assets/audio/level_up.wav')
+        self.fall_sound = pygame.mixer.Sound('assets/audio/fall.wav')
+        self.fall_sound.set_volume(0.5)
+        self.main_theme_sound = pygame.mixer.Sound('assets/audio/main_theme.ogg')
+        self.main_theme_sound.set_volume(0.1)
+        self.main_theme_sound.play(-1)
 
     def clear_lines(self) -> int:
         """
@@ -567,10 +572,11 @@ class PyTetrisGame(MenuScreen):
         self.level += 1
         self.lines_cleared_since_level_up = 0
         self.delay_counters['auto_drop'].count = self.LEVEL_FRAMES[self.level]
-        self.level_up_sound.play()
+        # self.level_up_sound.play()
 
     def lock_and_get_new_peice(self):
         """Lock {self.player} in place and get a new peice from the queue"""
+        self.fall_sound.play()
         self.player.lock(self.board)
         self.player = self.get_from_queue()
         lines = self.clear_lines()
