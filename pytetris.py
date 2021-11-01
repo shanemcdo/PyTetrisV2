@@ -760,6 +760,7 @@ class MainMenu(MenuScreen):
 if __name__ == "__main__":
     pygame.init()
     size = Point(600, 700)
+    pygame.display.set_caption('PyTetris')
     screen = pygame.display.set_mode(size)
     menu = MainMenu(screen, size)
     menu.run()
