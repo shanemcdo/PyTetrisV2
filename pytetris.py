@@ -278,7 +278,7 @@ class PyTetrisGame(MenuScreen):
             28: 200,
             }
     # TODO: check if this is actually true
-    SOFT_DROP_DELAY = 2 # 1 cell per 2 frames
+    SOFT_DROP_DELAY = 6 # 1 cell per 6 frames
     DAS_INITIAL_DELAY = 16 # 1 cell per 16 frames; inital speed when holding button
     DAS_REPEAT_DELAY = 6 # 1 cell per 6 frames; speed after first iteration of holding button
     ARE_DELAY = 15 # time(frames) after a new peice is created where the peice cannot move
@@ -427,7 +427,7 @@ class PyTetrisGame(MenuScreen):
         self.lines_cleared_since_level_up = 0
         self.delay_counters = {
                 'ARE_lock': TrueEvery(self.ARE_DELAY, once = True, start_value = self.ARE_DELAY),
-                'soft_drop': TrueEvery(self.SOFT_DROP_DELAY, start_value = self.SOFT_DROP_DELAY),
+                'soft_drop': TrueEvery(self.SOFT_DROP_DELAY),
                 'auto_drop': TrueEvery(self.LEVEL_FRAMES[self.level]),
                 'DAS_fast_drop': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
                 'DAS_move_left': TrueEvery(self.DAS_REPEAT_DELAY, self.DAS_INITIAL_DELAY),
